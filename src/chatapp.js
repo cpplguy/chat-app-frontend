@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import socket from "./socket.js";
 import "./chatapp.css";
 export default function ChatPage() {
@@ -10,7 +10,6 @@ export default function ChatPage() {
   const [whoAmI, setWhoAmI] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [peopleOnline, setPeopleOnline] = useState(0);
-  const [users, setUsers] = useState([])
   function setDisabledState() {
     setDisabled(true);
     setTimeout(() => {
@@ -55,7 +54,6 @@ export default function ChatPage() {
     };
     const handler2 = (users) => {
       setPeopleOnline(users.length);
-      setUsers(users);
       console.log(users);
     }
     socket.on("chat message", handler);
@@ -68,7 +66,7 @@ export default function ChatPage() {
 
       socket.off("users connected", handler2)
     };
-  }, []);
+  }, [navigate]);
   useEffect(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });

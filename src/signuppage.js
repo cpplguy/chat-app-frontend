@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 export default function LoginPage({ setIsAuth }) {
   const [name, setName] = useState("");
@@ -49,22 +49,6 @@ export default function LoginPage({ setIsAuth }) {
       }
     } else {
       alert("Please fill in all forms");
-    }
-  }
-  async function getNames() {
-    try {
-      const fet = await fetch(
-        `${process.env.REACT_APP_SERVER}/api/users/getNames`
-      );
-      const arr = await fet.json();
-      if (fet.status === 429) {
-        alert(arr.error);
-        return;
-      }
-      return arr;
-    } catch (err) {
-      console.error(err);
-      alert(err);
     }
   }
 

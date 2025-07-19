@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 import SignUpPage from "./signuppage.js";
 import LoginPage from "./loginpage.js";
@@ -7,7 +6,7 @@ import PublicPage from "./public.js";
 import NotFound from "./notfound.js";
 import ChatPage from "./chatapp.js";
 import React from "react";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
 function App() {
   const [isAuth, setIsAuth] = useState(false);
