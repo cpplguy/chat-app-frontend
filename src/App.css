@@ -1,38 +1,98 @@
-.App {
-  text-align: center;
+#login{
+  background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+form{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  flex-wrap:wrap;
+  justify-content:center;
+  text-align:center;
+  height:100vh;
+  margin: 0 auto;
+  font-family: "Quicksand", san-serif;
+  border: 0.1px solid black;
+  
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+#signup{
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+button{
+  font-family: "Quicksand", san-serif;
+  border-radius: 5.5px;
+  color:white;
+}
+form input{
+  margin: 1rem auto;
+  width: 25vw;
+  height: 5vh;
+}
+form button[type="submit"]{
+  height: fit-content;
+  background-color:forestgreen;
+  font-weight:bolder;
+  font-size:3vh;
+}
+form button[type = "submit"]:hover{
+  background-color: darkgreen;
+}
+.clear{
+  background-color:lightcoral;
+  border: 0;
+}
+.clear:hover{
+  background-color:crimson;
+}
+.page{
+  display:flex;
+  flex-direction:row;
+}
+.logo{
+  display:flex;
+  width: 50%;
+  height: 100vh;
+  justify-content:center;
+  align-items:center;
+}
+.logo h1{
+  font-size:9.5vh;
+  font-family: "Sora", san-serif
+}
+.logo h1 .green{
+  color: green;
+}
+.navigate-container{
+  display:flex;
+}
+.navigate{
+  height: fit-content;
+  align-self:center;
+  width: fit-content;
+  border-radius: 10px;
+  font-size: 3vh;
+  background-color:blanchedalmond;
+  border:0;
+  color: rgb(55, 55, 88);
+}
+@media(max-width:700px){
+  .logo{
+    display:none;
   }
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+@media(max-width: 575px){
+  form{
+    border: 0;
   }
-  to {
-    transform: rotate(360deg);
+  .navigate-container{
+    justify-content:center;
+  }
+  .navigate{
+    position:fixed;
+    width:30vw;
+    margin:0 auto;
+    bottom: 0;
+  }
+  #signup, #login{
+    display:inline;
   }
 }

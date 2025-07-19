@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libertinus+Mono&display=swap');
+*{
+    transition: all 0.2s;
+}
+body{
+    background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 50%, #4477ff 100%);
+    height: 100vh;
+}
+header{
+    display:flex;
+    flex-direction:column;
+}
+#people-online{
+    display:flex;
+    align-items:start;
+}
+.circle{
+    display: inline-block;
+    width: 0.75vh;
+    height: 0.75vh;
+    border-radius:50%;
+    margin-top:1.5vh;
+    margin-top: 0 auto;
+    border: 0.1px solid white;
+}
+.circle.green{
+    background-color:lime;
+}
+.circle.red{
+    background-color:red;
+}
+h2{
+    font-family:"Manrope", monospace;
+    font-size: 5vh;
+    font-weight: bolder;
+    color: black;
+    justify-self:center;
+    margin: 0 auto;
+}
+#send-message{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background-color:azure;
+    width: 4vw;
+    height: 4vw;
+    border-radius: 50%;
+    z-index:0;
+    border: 1px solid blue;
+    cursor: pointer;
+}
+#send-message h1{
+    color: black;
+}
+#input-container{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    position: fixed;
+    bottom:0;
+}
+#input-container input{
+    width: 90vw;
+    height: 6vh;
+    border-radius: 20px;
+    font-size: 3vh;
+}
+
+#messages-container{
+    display: flex;
+    z-index: 1;
+    margin: 0 auto;
+    margin-top:5vh;
+    background-color: white;
+    position: relative;
+    flex-direction:column-reverse;
+    border: 0.25vw solid darkgray;
+    width: 92.5%;
+    max-height: 70vh;
+    border-radius:20px;
+    overflow-y: scroll;
+    box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.1);
+}
+.message{
+    display: flex;
+    border: 1px solid lightgray;
+    font-family: "Inter", sans-serif;
+    font-size: 3vh;
+    padding: 0.5vw;
+    padding-left: 1.25vw;
+    padding-right: 1.25vw;
+    border-radius: 12.5px;
+    margin-top: 1vh;
+    width: fit-content;
+    word-break:break-word;
+}
+.client{
+    background-color: #E5E5EA;
+    color: black;
+    align-self: flex-start;
+}
+.user{
+    background-color: #007AFF;
+    color: white;
+    align-self: flex-end;;
+    margin-left: auto;
+}
+.username{
+    font-size: 2.5vh;
+    font-weight: lighter;
+    color: gray;
+    margin-bottom: 0.25vh;
+}
+button:hover{
+    cursor: pointer;
+    background-color:lightgray;
+}
+#send-message:disabled{
+    cursor: default;
+    background-color: gray;
+}
+@media(max-height: 600px){
+    #messages-container{
+        max-height: 60vh;
+    }
+    #input-container input{
+        height: 5vh;
+        font-size: 2.5vh;
+    }
+    #send-message{
+        width: 6vw;
+        height: 6vw;
+    }
+    #send-message img{
+        width: 100%;
+        height: 100%;
+    }
+    #input-container input{
+        height: 1.75rem;
+    }
+}
