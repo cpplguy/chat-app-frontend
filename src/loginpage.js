@@ -108,7 +108,7 @@ export default function LoginPage({ setIsAuth }) {
           <br />
           <button type="submit">Login</button>
         </form>
-        <div class = "navigate-container">
+        <div className = "navigate-container">
         <button className="navigate" onClick={() => navigate("/signup")}>
           Don't have an account? Sign up here
         </button>

@@ -10,6 +10,7 @@ export default function ChatPage() {
   const [whoAmI, setWhoAmI] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [peopleOnline, setPeopleOnline] = useState(0);
+  const [usernames, setUsernames] = useState("no one");
   function setDisabledState() {
     setDisabled(true);
     setTimeout(() => {
@@ -54,17 +55,17 @@ export default function ChatPage() {
     };
     const handler2 = (users) => {
       setPeopleOnline(users.length);
-      console.log(users);
-    }
+      setUsernames(users);
+    };
     socket.on("chat message", handler);
 
-    socket.on("users connected", handler2)
+    socket.on("users connected", handler2);
 
     socket.emit("request users connected");
     return () => {
       socket.off("chat message", handler);
 
-      socket.off("users connected", handler2)
+      socket.off("users connected", handler2);
     };
   }, [navigate]);
   useEffect(() => {
@@ -86,80 +87,104 @@ export default function ChatPage() {
     });
   }
   return (
-    <div id="chat-container">
-      <header>
-        <h2><em>Chat Page</em></h2>
-        <h2 id="people-online">Users Online: {peopleOnline}<span className ={`${peopleOnline > 1 ? "green" : "red"} circle`}></span></h2>
-      </header>
-      <div id="messages-container">
-        <p>
-          {messages?.length === 0
-            ? "messages will appear here"
-            : messages.map((msg, idx) => {
-                return (
-                  <>
-                    <span key={idx}>
-                      <span className="username">
-                        {whoAmI !== msg.email
-                          ? msg.email?.length > 21
-                            ? msg.email.slice(0, 10) +
-                              "..." +
-                              msg.email.slice(msg.email.length - 9, msg.length)
-                            : msg.email
-                          : ""}
+    /**
+     * <aside id="sidebar">
+        People Online:
+        <br />
+        {usernames}
+      </aside>
+      <button id="sidebar-button" />
+     */
+    <>
+      <div id="chat-container">
+        <header>
+          <h2>
+            <em>Chat Page</em>
+          </h2>
+          <h2 id="people-online">
+            Users Online: {peopleOnline}
+            <span
+              className={`${peopleOnline > 1 ? "green" : "red"} circle`}
+            ></span>
+          </h2>
+        </header>
+        <div id="messages-container">
+          <p>
+            {messages?.length === 0
+              ? "messages will appear here"
+              : messages.map((msg, idx) => {
+                  const date = new Date(msg.createdAt);
+                  const who = whoAmI !== msg.email
+                  return (
+                    <>
+                      <span key={idx}>
+                        <span className="username">
+                          {
+                            who
+                            ? msg.email?.length > 21
+                              ? msg.email.slice(0, 10) +
+                                "..." +
+                                msg.email.slice(
+                                  msg.email.length - 9,
+                                  msg.length
+                                )
+                              : msg.email
+                            : ""}
+                          { who && date.toLocaleDateString()}{" "}
+                          {who && date.toLocaleTimeString().slice(0, 5) +
+                            date.toLocaleTimeString().slice(-2)}
+                        </span>
+                        <span
+                          className={`${
+                            whoAmI === msg.email
+                              ? "user message"
+                              : "client message"
+                          }`}
+                        >
+                          {msg.text}
+                        </span>
                       </span>
-                      <span
-                        className={`${
-                          whoAmI === msg.email
-                            ? "user message"
-                            : "client message"
-                        }`}
-                      >
-                        {msg.text}
-                      </span>
-                    </span>
-                    <br />
-                  </>
-                );
-              })}
-        </p>
-        <div
-          id="bottom"
-          ref={bottomRef}
-          style={{ position: "absolute", bottom: "0" }}
-        ></div>
-      </div>
-      <div id="input-container">
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => {
-            if (e.target.value.length > 70) {
-              alert("Message cannot exceed 70 characters.");
-              return;
-            }
-            setMessage(e.target.value);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && message.trim() && !disabled) {
+                      <br />
+                    </>
+                  );
+                })}
+          </p>
+          <div
+            id="bottom"
+            ref={bottomRef}
+            style={{ position: "absolute", bottom: "0" }}
+          ></div>
+        </div>
+        <div id="input-container">
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => {
+              if (e.target.value.length > 70) {
+                alert("Message cannot exceed 70 characters.");
+                return;
+              }
+              setMessage(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && message.trim() && !disabled) {
+                sendHandler(e);
+              }
+            }}
+            placeholder="Type your message."
+          />
+          <button
+            disabled={!message.trim()}
+            id="send-message"
+            onClick={(e) => {
               sendHandler(e);
-            }
-          }}
-          placeholder="Type your message."
-        />
-        <button
-          disabled={!message.trim()}
-          id="send-message"
-          onClick={(e) => {
-            sendHandler(e);
-          }}
-        >
-          <h1>
-          ↑
-          </h1>
-        </button>
+            }}
+          >
+            <h1>↑</h1>
+          </button>
+        </div>
       </div>
-    </div>
+    </>
     /**<h1>
         {usernames &&
           usernames.map((items, idx) => (

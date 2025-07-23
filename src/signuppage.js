@@ -77,7 +77,6 @@ export default function LoginPage({ setIsAuth }) {
             required
           />
           <button
-            id="clearform"
             className="clear"
             onClick={(e) => {
               e.preventDefault();
@@ -97,7 +96,6 @@ export default function LoginPage({ setIsAuth }) {
             onChange={(e) => setPass(e.target.value)}
           />
           <button
-            id="clearform"
             className="clear"
             onClick={(e) => {
               e.preventDefault();
@@ -111,7 +109,7 @@ export default function LoginPage({ setIsAuth }) {
           Make account
         </button>
       </form>
-      <div class = "navigate-container">
+      <div className = "navigate-container">
       <button className="navigate" onClick={() => navigate("/")}>
         Already have an account? Click here to login
       </button>

@@ -10,6 +10,14 @@ header{
     display:flex;
     flex-direction:column;
 }
+#sidebar{
+    background-color:white;
+    width: fit-content;
+    height: fit-content;
+    padding: 1vh;
+    border: 1px solid black;
+    border-radius:5px;
+}
 #people-online{
     display:flex;
     align-items:start;
