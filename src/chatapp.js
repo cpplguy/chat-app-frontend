@@ -87,15 +87,13 @@ export default function ChatPage() {
     });
   }
   return (
-    /**
-     * <aside id="sidebar">
+    // <button id="sidebar-button" />
+    <>
+      <aside id="sidebar">
         People Online:
         <br />
         {usernames}
       </aside>
-      <button id="sidebar-button" />
-     */
-    <>
       <div id="chat-container">
         <header>
           <h2>
@@ -114,13 +112,12 @@ export default function ChatPage() {
               ? "messages will appear here"
               : messages.map((msg, idx) => {
                   const date = new Date(msg.createdAt);
-                  const who = whoAmI !== msg.email
+                  const who = whoAmI !== msg.email;
                   return (
                     <>
                       <span key={idx}>
                         <span className="username">
-                          {
-                            who
+                          {who
                             ? msg.email?.length > 21
                               ? msg.email.slice(0, 10) +
                                 "..." +
@@ -130,9 +127,10 @@ export default function ChatPage() {
                                 )
                               : msg.email
                             : ""}
-                          { who && date.toLocaleDateString()}{" "}
-                          {who && date.toLocaleTimeString().slice(0, 5) +
-                            date.toLocaleTimeString().slice(-2)}
+                          {who && date.toLocaleDateString()}{" "}
+                          {who &&
+                            date.toLocaleTimeString().slice(0, 5) +
+                              date.toLocaleTimeString().slice(-2)}
                         </span>
                         <span
                           className={`${
