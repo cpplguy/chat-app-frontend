@@ -13,7 +13,7 @@ export default function LoginPage({ setIsAuth }) {
     if (name && pass) {
       try {
         const fet = await fetch(
-          `${process.env.REACT_APP_SERVER}/api/users/postUserInfo`,
+          '/api/users/postUserInfo',
           {
             method: "POST",
             headers: {

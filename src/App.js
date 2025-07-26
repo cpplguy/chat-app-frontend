@@ -12,7 +12,7 @@ function App() {
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_SERVER}/api/auth`, {
+    fetch('/api/auth', {
       method: "GET",
       credentials: "include",
     })

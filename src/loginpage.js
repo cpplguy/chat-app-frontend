@@ -11,7 +11,7 @@ export default function LoginPage({ setIsAuth }) {
   }
   async function login(obj) {
     const fetc = await fetch(
-      `${process.env.REACT_APP_SERVER}/api/users/login`,
+      '/api/users/login',
       {
         method: "POST",
         credentials: "include",

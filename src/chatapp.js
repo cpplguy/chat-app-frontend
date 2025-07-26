@@ -32,7 +32,7 @@ export default function ChatPage() {
     setDisabledState();
   }
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_SERVER}/api/users/whoami`, {
+    fetch("/api/users/whoami", {
       method: "GET",
       credentials: "include",
     })
@@ -49,7 +49,8 @@ export default function ChatPage() {
       .then((data) => {
         setWhoAmI(data.email);
         console.log("Who am i data: ", data.email);
-      });
+      })
+      .catch((err) => console.error("Error fetching, err: ", err));
     const handler = (newMessage) => {
       setMessages(newMessage);
     };
