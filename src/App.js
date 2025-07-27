@@ -67,6 +67,7 @@ function App() {
             </ProtectedPage>
           }
         ></Route>
+        <Route path = "/api/*"/>
         <Route path = "*" element = {<NotFound/>}/>
       </Routes>
     </BrowserRouter>
