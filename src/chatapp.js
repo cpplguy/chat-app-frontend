@@ -7,7 +7,7 @@ import "./chatapp.css";
 export default function ChatPage() {
   const { isAuth } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { roomId } = useParams();
+  const { roomId = "main" } = useParams();
   const bottomRef = useRef(null);
   //message states
   const [message, setMessage] = useState("");
@@ -120,7 +120,7 @@ export default function ChatPage() {
         <header>
           <h2>
             <em title={roomId}>
-              {(roomId?.length > 30
+              {(roomId.length > 30
                 ? roomId.slice(0, 30) + "..."
                 : roomId.toLowerCase() !== "main"
                 ? roomId
