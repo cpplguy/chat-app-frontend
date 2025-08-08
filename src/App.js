@@ -5,23 +5,34 @@ import ProtectedPage from "./protected.js";
 import PublicPage from "./public.js";
 import NotFound from "./notfound.js";
 import ChatPage from "./chatapp.js";
-import React from "react";
+import Refresh from "./reload.js";
+import AuthContext from "./authcontext.js";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
 function App() {
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    fetch('/api/auth', {
-      method: "GET",
-      credentials: "include",
-    })
+    fetch(
+      `${
+        !(process.env.REACT_APP_STATUS === "development")
+          ? "/api/auth"
+          : process.env.REACT_APP_SERVER + "/api/auth"
+      }`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => {
         if (res.status === 200) {
           setIsAuth(true);
         } else {
           setIsAuth(false);
-          console.log(res)
+          console.log(res);
         }
         setLoading(false);
       })
@@ -33,13 +44,15 @@ function App() {
   }, []);
   if (loading) return <div>Loading...</div>;
   return (
+    <AuthContext.Provider value = {{isAuth, setIsAuth}}>
     <BrowserRouter>
+      <Refresh/>
       <Routes>
         <Route
           path="/"
           element={
             <PublicPage isAuth={isAuth}>
-              <LoginPage setIsAuth = {setIsAuth} />
+              <LoginPage setIsAuth={setIsAuth} />
             </PublicPage>
           }
         ></Route>
@@ -47,7 +60,7 @@ function App() {
           path="/signup"
           element={
             <PublicPage isAuth={isAuth}>
-              <SignUpPage setIsAuth = {setIsAuth}/>
+              <SignUpPage setIsAuth={setIsAuth} />
             </PublicPage>
           }
         ></Route>
@@ -55,7 +68,7 @@ function App() {
           path="/login"
           element={
             <PublicPage isAuth={isAuth}>
-              <LoginPage setIsAuth = {setIsAuth} />
+              <LoginPage setIsAuth={setIsAuth} />
             </PublicPage>
           }
         />
@@ -63,15 +76,22 @@ function App() {
           path="/chat"
           element={
             <ProtectedPage isAuth={isAuth}>
-              <ChatPage/>
+              <ChatPage isAuth={isAuth} />
             </ProtectedPage>
           }
-        ></Route>
-        <Route path = "/api/*"/>
-        <Route path = "*" element = {<NotFound/>}/>
+        />
+        <Route
+          path="/chat/:roomId"
+          element={
+            <ProtectedPage isAuth={isAuth}>
+              <ChatPage isAuth={isAuth} />
+            </ProtectedPage>
+          }
+        />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
+    </AuthContext.Provider>
   );
 }
-
 export default App;

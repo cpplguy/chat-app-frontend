@@ -1,16 +1,27 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef, useContext, Fragment } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import socket from "./socket.js";
+import AuthContext from "./authcontext.js";
+import SideBar from "./sidebar.js";
 import "./chatapp.css";
 export default function ChatPage() {
+  const { isAuth } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { roomId } = useParams();
   const bottomRef = useRef(null);
+  //message states
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [whoAmI, setWhoAmI] = useState("");
+  //
   const [disabled, setDisabled] = useState(false);
   const [peopleOnline, setPeopleOnline] = useState(0);
-  const [usernames, setUsernames] = useState("no one");
+  // Stuff for form
+  const [usernames, setUsernames] = useState(["No One"]);
+  //
+
+  //fns
+
   function setDisabledState() {
     setDisabled(true);
     setTimeout(() => {
@@ -31,16 +42,25 @@ export default function ChatPage() {
     setMessage("");
     setDisabledState();
   }
+  //
   useEffect(() => {
-    fetch("/api/users/whoami", {
-      method: "GET",
-      credentials: "include",
-    })
+    //IMPORTANT connects socket
+    socket.connect();
+    fetch(
+      `${
+        !(process.env.REACT_APP_STATUS === "development")
+          ? "/api/chat/whoami"
+          : process.env.REACT_APP_SERVER + "/api/chat/whoami"
+      }`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    )
       .then((res) => {
         if (res.status === 200) {
           return res.json();
         } else if (res.status === 401) {
-          alert("You are not authenticated. Please log in.");
           navigate("/", { replace: true });
         } else {
           throw new Error(`Unexpected status code: ${res.status}`);
@@ -48,38 +68,44 @@ export default function ChatPage() {
       })
       .then((data) => {
         setWhoAmI(data.email);
-        console.log("Who am i data: ", data.email);
       })
       .catch((err) => console.error("Error fetching, err: ", err));
     const handler = (newMessage) => {
       setMessages(newMessage);
     };
     const handler2 = (users) => {
-      setPeopleOnline(users.length);
+      if (!isAuth) {
+        navigate("/", { replace: true });
+        return;
+      }
       setUsernames(users);
     };
+    const handler3 = (length) => {
+      setPeopleOnline(length);
+    };
+    socket.emit("join room", roomId || "main");
     socket.on("chat message", handler);
 
     socket.on("users connected", handler2);
+
+    socket.on("users online", handler3);
 
     socket.emit("request users connected");
     return () => {
       socket.off("chat message", handler);
 
       socket.off("users connected", handler2);
+
+      socket.off("users online", handler3);
+
+      socket.disconnect();
     };
-  }, [navigate]);
+  }, [navigate, isAuth, roomId]);
   useEffect(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-  useEffect(() => {
-    if (!sessionStorage.getItem("refresh")) {
-      sessionStorage.setItem("refresh", "true");
-      window.location.reload();
-    }
-  }, []);
   function sendMessage(newMessage) {
     socket.emit("chat message", newMessage, (error) => {
       if (error) {
@@ -88,19 +114,24 @@ export default function ChatPage() {
     });
   }
   return (
-    // <button id="sidebar-button" />
     <>
-      <aside id="sidebar">
-        People Online:
-        <br />
-        {usernames}
-      </aside>
+      <SideBar usernames={usernames} />
       <div id="chat-container">
         <header>
           <h2>
-            <em>Chat Page</em>
+            <em title={roomId}>
+              {(roomId?.length > 30
+                ? roomId.slice(0, 30) + "..."
+                : roomId.toLowerCase() !== "main"
+                ? roomId
+                : "Main Chat") || "Main Chat"}{" "}
+              Page
+            </em>
           </h2>
-          <h2 id="people-online">
+          <h2
+            id="people-online"
+            title="Current amount of users online. Green dot signializes that people (other than you) are online."
+          >
             Users Online: {peopleOnline}
             <span
               className={`${peopleOnline > 1 ? "green" : "red"} circle`}
@@ -115,9 +146,19 @@ export default function ChatPage() {
                   const date = new Date(msg.createdAt);
                   const who = whoAmI !== msg.email;
                   return (
-                    <>
-                      <span key={idx}>
+                    <Fragment key={msg._id}>
+                      <span>
                         <span className="username">
+                          {who && (
+                            <span
+                              className="profile-picture"
+                              style={{
+                                backgroundColor: `${msg.color || "lightgray"}`,
+                              }}
+                            >
+                              <img src="/icons8-account-48.png" alt="pfp" />
+                            </span>
+                          )}
                           {who
                             ? msg.email?.length > 21
                               ? msg.email.slice(0, 10) +
@@ -144,7 +185,7 @@ export default function ChatPage() {
                         </span>
                       </span>
                       <br />
-                    </>
+                    </Fragment>
                   );
                 })}
           </p>
@@ -154,43 +195,37 @@ export default function ChatPage() {
             style={{ position: "absolute", bottom: "0" }}
           ></div>
         </div>
-        <div id="input-container">
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => {
-              if (e.target.value.length > 70) {
-                alert("Message cannot exceed 70 characters.");
-                return;
-              }
-              setMessage(e.target.value);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && message.trim() && !disabled) {
+        <section id="input-container-container">
+          <div id="input-container">
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => {
+                if (e.target.value.length > 70) {
+                  alert("Message cannot exceed 70 characters.");
+                  return;
+                }
+                setMessage(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && message.trim() && !disabled) {
+                  sendHandler(e);
+                }
+              }}
+              placeholder="Type your message."
+            />
+            <button
+              disabled={!message.trim()}
+              id="send-message"
+              onClick={(e) => {
                 sendHandler(e);
-              }
-            }}
-            placeholder="Type your message."
-          />
-          <button
-            disabled={!message.trim()}
-            id="send-message"
-            onClick={(e) => {
-              sendHandler(e);
-            }}
-          >
-            <h1>↑</h1>
-          </button>
-        </div>
+              }}
+            >
+              <h1>↑</h1>
+            </button>
+          </div>
+        </section>
       </div>
     </>
-    /**<h1>
-        {usernames &&
-          usernames.map((items, idx) => (
-            <div key={idx}>
-              user {idx + 1}. {items}
-            </div>
-          ))}
-      </h1> */
   );
 }

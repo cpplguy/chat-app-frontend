@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-export default function LoginPage({ setIsAuth }) {
+import AuthContext from "./authcontext.js";
+export default function LoginPage() {
+  const {setIsAuth} = useContext(AuthContext);
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const navigate = useNavigate();
@@ -10,45 +12,47 @@ export default function LoginPage({ setIsAuth }) {
     }
   }
   async function postCredentials(obj) {
-    if (name && pass) {
-      try {
-        const fet = await fetch(
-          '/api/users/postUserInfo',
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(obj),
-            credentials: "include",
-          }
-        );
-        switch (fet.status) {
-          case 400:
-            alert("Please enter a valid email address.");
-            return;
-          case 409:
-            alert("Email already exists.");
-            return;
-          case 429:
-            const error = await fet.json();
-            alert(error.error);
-            return;
-          case 200:
-            console.log("Successful: User created.");
-            setIsAuth(true);
-            return;
-          default:
-            alert(
-              `Server code: ${fet.status}. Error message: ${fet.statusText}`
-            );
+    if (!name || !pass) {
+      return alert("Please fill in all forms");
+    }
+
+    try {
+      const fet = await fetch(
+        `${
+          !(process.env.REACT_APP_STATUS === "development")
+            ? "/api/users/postUserInfo"
+            : process.env.REACT_APP_SERVER + "/api/users/postUserInfo"
+        }`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(obj),
+          credentials: "include",
         }
-      } catch (err) {
-        console.error(err);
-        alert(`An error has occured. Error: ${err.message}`);
+      );
+      switch (fet.status) {
+        case 400:
+          alert("Please enter a valid email address.");
+          return;
+        case 409:
+          alert("Email already exists.");
+          return;
+        case 429:
+          const error = await fet.json();
+          alert(error.error);
+          return;
+        case 200:
+          console.log("Successful: User created.");
+          setIsAuth(true);
+          return;
+        default:
+          alert(`Server code: ${fet.status}. Error message: ${fet.statusText}`);
       }
-    } else {
-      alert("Please fill in all forms");
+    } catch (err) {
+      console.error(err);
+      alert(`An error has occured. Error: ${err.message}`);
     }
   }
 
@@ -60,23 +64,27 @@ export default function LoginPage({ setIsAuth }) {
         </h1>
       </div>
       <form
+      className = "form"
         onSubmit={(e) => {
+          console.log("ddd");
           e.preventDefault();
           postCredentials({ name: name, password: pass });
         }}
       >
-        <h1>Signup</h1>
+        <h1 className="main-text">Signup</h1>
         <label>
           Name:
           <input
+            maxLength={254}
             onKeyDown={(e) => handleKey(e)}
             type="email"
             value={name}
             placeholder="Type email address..."
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => e.target.value.length < 254 && setName(e.target.value)}
             required
           />
           <button
+            type="button"
             className="clear"
             onClick={(e) => {
               e.preventDefault();
@@ -96,6 +104,7 @@ export default function LoginPage({ setIsAuth }) {
             onChange={(e) => setPass(e.target.value)}
           />
           <button
+            type="button"
             className="clear"
             onClick={(e) => {
               e.preventDefault();
@@ -105,15 +114,15 @@ export default function LoginPage({ setIsAuth }) {
             X
           </button>
         </label>
-        <button type="submit" disabled={!name || !pass}>
-          Make account
+        <button type="submit">Make account</button>
+        <button
+          className="navigate"
+          type="button"
+          onClick={() => navigate("/")}
+        >
+          Already have an account? Click here to login
         </button>
       </form>
-      <div className = "navigate-container">
-      <button className="navigate" onClick={() => navigate("/")}>
-        Already have an account? Click here to login
-      </button>
-      </div>
       <br />
     </section>
   );

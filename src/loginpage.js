@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-export default function LoginPage({ setIsAuth }) {
+import AuthContext from "./authcontext.js";
+export default function LoginPage() {
+  const {setIsAuth} = useContext(AuthContext);
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
@@ -10,8 +12,12 @@ export default function LoginPage({ setIsAuth }) {
     }
   }
   async function login(obj) {
+    if(!name || !pass){
+      alert("Please fill in all fields");
+      return;
+    }
     const fetc = await fetch(
-      '/api/users/login',
+      `${!(process.env.REACT_APP_STATUS==='development') ? '/api/users/login' : process.env.REACT_APP_SERVER + "/api/users/login"}`,
       {
         method: "POST",
         credentials: "include",
@@ -47,11 +53,7 @@ export default function LoginPage({ setIsAuth }) {
   }
   async function handleSubmit(e) {
     e.preventDefault();
-    if (name && pass) {
       await login({ name: name, password: pass });
-    } else {
-      alert("Please fill in all fields");
-    }
   }
   return (
     <>
@@ -62,8 +64,8 @@ export default function LoginPage({ setIsAuth }) {
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <h1>Login</h1>
+        <form className = "form"onSubmit={handleSubmit}>
+          <h1 className = "main-text">Login</h1>
           <label>
             Name:
             <input
@@ -74,7 +76,6 @@ export default function LoginPage({ setIsAuth }) {
               placeholder="Type email address..."
             />
             <button
-              id="clearname"
               className="clear"
               onClick={(e) => {
                 e.preventDefault();
@@ -95,7 +96,6 @@ export default function LoginPage({ setIsAuth }) {
               onChange={(e) => setPass(e.target.value)}
             />
             <button
-              id="clearform"
               className="clear"
               onClick={(e) => {
                 e.preventDefault();
@@ -107,12 +107,10 @@ export default function LoginPage({ setIsAuth }) {
           </label>
           <br />
           <button type="submit">Login</button>
-        </form>
-        <div className = "navigate-container">
-        <button className="navigate" onClick={() => navigate("/signup")}>
+          <button className="navigate" type = "button" onClick={() => navigate("/signup")}>
           Don't have an account? Sign up here
         </button>
-        </div>
+        </form>
       </section>
     </>
   );

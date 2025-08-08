@@ -1,5 +1,8 @@
 import { Navigate } from "react-router-dom";
-export default function ProtectedPage({ children, isAuth }){
+import {useContext} from "react";
+import AuthContext from "./authcontext.js";
+export default function ProtectedPage({ children}){
+    const {isAuth} = useContext(AuthContext);
     if(!isAuth) return <Navigate to="/login" replace />;
     return children;
 }
