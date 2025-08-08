@@ -38,7 +38,7 @@ body {
   height: 10vh;
   border: 1px solid black;
   border-radius: 10px;
-  width: 20vw;
+  width: calc(20vw + 7.99999vh);
 }
 #not-found:hover{
   background-color: darkgreen;
