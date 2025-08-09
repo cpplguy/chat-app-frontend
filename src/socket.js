@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-export default io(`${process.env.REACT_APP_SERVER}`, {
+export default io("/api", {
     withCredentials: true,
     transports: ["websocket"],
   });
