@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef, useContext, Fragment } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import createSocket from "./socket.js";
@@ -10,6 +11,7 @@ export default function ChatPage() {
   const { roomId = "main" } = useParams();
   const bottomRef = useRef(null);
   const socketRef = useRef(null);
+  const fetchRef = useRef(false);
   //message states
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -20,29 +22,59 @@ export default function ChatPage() {
   // Stuff for form
   const [usernames, setUsernames] = useState(["No One"]);
   //
-
+  const [fetchData, setFetchData] = useState({});
   //fns
-
-  //
-  useEffect(() => {
-    const handler = (newMessage) => {
-      setMessages(newMessage);
-    };
-    const handler2 = (users) => {
-      if (!isAuth) {
-        navigate("/", { replace: true });
-        return;
-      }
-      setUsernames(users);
-    };
-    const handler3 = (length) => {
-      setPeopleOnline(length);
-    };
-    const errorHandler = (err) => {
-      console.error("error has happened while connecting. Error : ", err)
+  const handler = (newMessage) => {
+    setMessages(newMessage);
+  };
+  const handler2 = (users) => {
+    if (!isAuth) {
+      navigate("/", { replace: true });
+      return;
     }
-    //IMPORTANT connects socket
-    fetch(
+    setUsernames(users);
+  };
+  const handler3 = (length) => {
+    setPeopleOnline(length);
+  };
+  const errorHandler = (err) => {
+    console.error("error has happened while connecting. Error : ", err);
+  };
+  const fetchErrorHandler = (err) => {
+    console.error("Error fetching, err: ", err);
+    socketCleanUp();
+  };
+  const socketCleanUp = () => {
+    if (socketRef.current) {
+      const socket = socketRef.current;
+      socket.off("chat message", handler);
+
+      socket.off("users connected", handler2);
+
+      socket.off("users online", handler3);
+
+      socket.off("connect_error", errorHandler);
+
+      socket.disconnect();
+    }
+  };
+  const init = (data) => {
+    setFetchData(data);
+    setWhoAmI(data.email);
+    if (!data.token) throw new Error("No token provided.");
+    const socket = createSocket(data.token);
+    socketRef.current = socket;
+    fetchRef.current = true;
+    socket.connect();
+    socket.emit("join room", roomId || "main");
+    socket.on("users connected", handler2);
+    socket.on("chat message", handler);
+    socket.on("users online", handler3);
+    socket.emit("request users connected");
+    socket.on("connect_error", errorHandler);
+  };
+  function fetch() {
+    return fetch(
       `${
         !(process.env.REACT_APP_STATUS === "development")
           ? "/api/chat/whoami"
@@ -52,47 +84,32 @@ export default function ChatPage() {
         method: "GET",
         credentials: "include",
       }
-    )
-      .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        } else if (res.status === 401) {
-          navigate("/", { replace: true });
-        } else {
-          throw new Error(
-            `Unexpected status code: ${res.status}, error: ${res.error}`
-          );
-        }
-      })
-      .then((data) => {
-        setWhoAmI(data.email);
-        if (!data.token) throw new Error("No token provided.")
-        const socket = createSocket(data.token);
-        socketRef.current = socket;
-        socket.connect();
-          socket.emit("join room", roomId || "main");
-          socket.on("users connected", handler2);
-          socket.on("chat message", handler);
-          socket.on("users online", handler3);
-          socket.emit("request users connected");
-          socket.on("connect_error", errorHandler)
-        })
-      .catch((err) => console.error("Error fetching, err: ", err));
-
-    return () => {
-      if (socketRef.current) {
-        const socket = socketRef.current
-        socket.off("chat message", handler);
-
-        socket.off("users connected", handler2);
-
-        socket.off("users online", handler3);
-
-        socket.off("connect_error", errorHandler)
-
-        socket.disconnect();
+    ).then((res) => {
+      if (res.status === 200) {
+        return res.json();
+      } else if (res.status === 401) {
+        navigate("/", { replace: true });
+      } else {
+        throw new Error(
+          `Unexpected status code: ${res.status}, error: ${res.error}`
+        );
       }
-    };
+    });
+  }
+
+  useEffect(() => {
+    //IMPORTANT connects socket
+    if (!fetchRef.current) {
+      fetch().then(init).catch(fetchErrorHandler);
+    } else {
+      try {
+        init(fetchData);
+      } catch (err) {
+        fetchErrorHandler(err);
+      }
+    }
+
+    return socketCleanUp;
   }, [navigate, isAuth, roomId]);
   function setDisabledState() {
     setDisabled(true);
@@ -124,6 +141,7 @@ export default function ChatPage() {
     setMessage("");
     setDisabledState();
   }
+  
   useEffect(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
