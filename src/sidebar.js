@@ -77,7 +77,7 @@ export default function SideBar({ usernames }) {
                 setPeopleOnlineSection(() => !peopleOnlineSection);
               }}
             >
-              People Online
+              People in Room
               <span
                 id="arrow"
                 className={peopleOnlineSection ? "section-displayed" : ""}
