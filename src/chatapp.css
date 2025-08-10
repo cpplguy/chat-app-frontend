@@ -118,6 +118,10 @@ body{
     transform:rotate(0deg);
     left:0.5vh;
 }
+.user-container{
+    display:flex;
+    flex-direction:row;
+}
 .copy-container{
     display:flex;
     align-items:end;

@@ -94,7 +94,7 @@ export default function SideBar({ usernames }) {
               {usernames &&
                 usernames.map((usr, idx) => {
                   return (
-                    <Fragment key={idx}>
+                    <div className = "user-container" key={idx}>
                       <div className="name" title={usr}>
                         {usr.length < 12 ? usr : usr.slice(0, 8) + "..."}
                       </div>
@@ -106,7 +106,7 @@ export default function SideBar({ usernames }) {
                           <img src="/image.png" alt="copy" />
                         </button>
                       </div>
-                    </Fragment>
+                    </div>
                   );
                 })}
             </div>
