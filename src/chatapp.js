@@ -73,7 +73,7 @@ export default function ChatPage() {
     socket.emit("request users connected");
     socket.on("connect_error", errorHandler);
   };
-  function fetch() {
+  function fetchItems() {
     return fetch(
       `${
         !(process.env.REACT_APP_STATUS === "development")
@@ -100,7 +100,7 @@ export default function ChatPage() {
   useEffect(() => {
     //IMPORTANT connects socket
     if (!fetchRef.current) {
-      fetch().then(init).catch(fetchErrorHandler);
+      fetchItems().then(init).catch(fetchErrorHandler);
     } else {
       try {
         init(fetchData);
@@ -108,7 +108,6 @@ export default function ChatPage() {
         fetchErrorHandler(err);
       }
     }
-
     return socketCleanUp;
   }, [navigate, isAuth, roomId]);
   function setDisabledState() {
