@@ -38,6 +38,9 @@ export default function ChatPage() {
     const handler3 = (length) => {
       setPeopleOnline(length);
     };
+    const errorHandler = (err) => {
+      console.error("error has happened while connecting. Error : ", err)
+    }
     //IMPORTANT connects socket
     fetch(
       `${
@@ -72,9 +75,7 @@ export default function ChatPage() {
           socket.on("chat message", handler);
           socket.on("users online", handler3);
           socket.emit("request users connected");
-        });
-        socket.on("connect_error", (err) => {
-          console.error("error has happened while connecting. Error : ", err)
+          socket.on("connect_error", errorHandler)
         })
       .catch((err) => console.error("Error fetching, err: ", err));
 
@@ -86,6 +87,8 @@ export default function ChatPage() {
         socket.off("users connected", handler2);
 
         socket.off("users online", handler3);
+
+        socket.off("connect_error", errorHandler)
 
         socket.disconnect();
       }
