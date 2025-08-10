@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useContext, Fragment } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import socket from "./socket.js";
+import createSocket from "./socket.js";
 import AuthContext from "./authcontext.js";
 import SideBar from "./sidebar.js";
 import "./chatapp.css";
@@ -9,6 +9,7 @@ export default function ChatPage() {
   const navigate = useNavigate();
   const { roomId = "main" } = useParams();
   const bottomRef = useRef(null);
+  const socketRef = useRef(null);
   //message states
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -22,30 +23,22 @@ export default function ChatPage() {
 
   //fns
 
-  function setDisabledState() {
-    setDisabled(true);
-    setTimeout(() => {
-      setDisabled(false);
-    }, 3000);
-  }
-  function sendHandler(e) {
-    e.preventDefault();
-    if (message.trim() === "") {
-      alert("Message cannot be empty.");
-      return;
-    }
-    if (message.length > 100) {
-      alert("Message cannot exceed 100 characters.");
-      return;
-    }
-    sendMessage(message);
-    setMessage("");
-    setDisabledState();
-  }
   //
   useEffect(() => {
+    const handler = (newMessage) => {
+      setMessages(newMessage);
+    };
+    const handler2 = (users) => {
+      if (!isAuth) {
+        navigate("/", { replace: true });
+        return;
+      }
+      setUsernames(users);
+    };
+    const handler3 = (length) => {
+      setPeopleOnline(length);
+    };
     //IMPORTANT connects socket
-    socket.connect();
     fetch(
       `${
         !(process.env.REACT_APP_STATUS === "development")
@@ -63,56 +56,76 @@ export default function ChatPage() {
         } else if (res.status === 401) {
           navigate("/", { replace: true });
         } else {
-          throw new Error(`Unexpected status code: ${res.status}`);
+          throw new Error(
+            `Unexpected status code: ${res.status}, error: ${res.error}`
+          );
         }
       })
       .then((data) => {
         setWhoAmI(data.email);
-      })
+        if (!data.token) throw new Error("No token provided.")
+        const socket = createSocket(data.token);
+        socketRef.current = socket;
+        socket.connect();
+          socket.emit("join room", roomId || "main");
+          socket.on("users connected", handler2);
+          socket.on("chat message", handler);
+          socket.on("users online", handler3);
+          socket.emit("request users connected");
+        });
+        socket.on("connect_error", (err) => {
+          console.error("error has happened while connecting. Error : ", err)
+        })
       .catch((err) => console.error("Error fetching, err: ", err));
-    const handler = (newMessage) => {
-      setMessages(newMessage);
-    };
-    const handler2 = (users) => {
-      if (!isAuth) {
-        navigate("/", { replace: true });
-        return;
-      }
-      setUsernames(users);
-    };
-    const handler3 = (length) => {
-      setPeopleOnline(length);
-    };
-    socket.emit("join room", roomId || "main");
-    socket.on("chat message", handler);
 
-    socket.on("users connected", handler2);
-
-    socket.on("users online", handler3);
-
-    socket.emit("request users connected");
     return () => {
-      socket.off("chat message", handler);
+      if (socketRef.current) {
+        const socket = socketRef.current
+        socket.off("chat message", handler);
 
-      socket.off("users connected", handler2);
+        socket.off("users connected", handler2);
 
-      socket.off("users online", handler3);
+        socket.off("users online", handler3);
 
-      socket.disconnect();
+        socket.disconnect();
+      }
     };
   }, [navigate, isAuth, roomId]);
+  function setDisabledState() {
+    setDisabled(true);
+    setTimeout(() => {
+      setDisabled(false);
+    }, 3000);
+  }
+  const sendMessage = (newMessage) => {
+    if (!socketRef.current) {
+      console.error("socket not mounted");
+    }
+    socketRef.current.emit("chat message", newMessage, (error) => {
+      if (error) {
+        navigate("/", { replace: true });
+      }
+    });
+  };
+  function sendHandler(e) {
+    e.preventDefault();
+    if (message.trim() === "") {
+      alert("Message cannot be empty.");
+      return;
+    }
+    if (message.length > 100) {
+      alert("Message cannot exceed 100 characters.");
+      return;
+    }
+    sendMessage(message);
+    setMessage("");
+    setDisabledState();
+  }
   useEffect(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-  function sendMessage(newMessage) {
-    socket.emit("chat message", newMessage, (error) => {
-      if (error) {
-        navigate("/", { replace: true });
-      }
-    });
-  }
   return (
     <>
       <SideBar usernames={usernames} />
@@ -165,7 +178,7 @@ export default function ChatPage() {
                                 "..." +
                                 msg.email.slice(
                                   msg.email.length - 9,
-                                  msg.length
+                                  msg.email.length
                                 )
                               : msg.email
                             : ""}
@@ -201,8 +214,8 @@ export default function ChatPage() {
               type="text"
               value={message}
               onChange={(e) => {
-                if (e.target.value.length > 70) {
-                  alert("Message cannot exceed 70 characters.");
+                if (e.target.value.length > 100) {
+                  alert("Message cannot exceed 100 characters.");
                   return;
                 }
                 setMessage(e.target.value);
