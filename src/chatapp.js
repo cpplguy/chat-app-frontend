@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef, useContext, Fragment } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import createSocket from "./socket.js";
 import AuthContext from "./authcontext.js";
 import SideBar from "./sidebar.js";
 import "./chatapp.css";
 export default function ChatPage() {
   const { isAuth } = useContext(AuthContext);
+  const location = useLocation();
   const navigate = useNavigate();
   const { roomId = "main" } = useParams();
   const bottomRef = useRef(null);
@@ -19,11 +20,10 @@ export default function ChatPage() {
   //
   const [disabled, setDisabled] = useState(false);
   const [peopleOnline, setPeopleOnline] = useState(0);
-  // Stuff for form
+
   const [usernames, setUsernames] = useState(["No One"]);
-  //
+
   const [fetchData, setFetchData] = useState({});
-  //fns
   const handler = (newMessage) => {
     setMessages(newMessage);
   };
@@ -84,26 +84,38 @@ export default function ChatPage() {
         method: "GET",
         credentials: "include",
       }
-    )
-    if(fetchApi.status === 200){
+    );
+    if (fetchApi.status === 200) {
       return fetchApi.json();
-    }else if(fetchApi.status === 401){
+    } else if (fetchApi.status === 401) {
       navigate("/", { replace: true });
       throw new Error("Unauthorized");
-    }else{
-      throw new Error(`Unexpected status code: ${fetchApi.status}, error: ${fetchApi.error}`);
+    } else {
+      throw new Error(
+        `Unexpected status code: ${fetchApi.status}, error: ${fetchApi.error}`
+      );
     }
   }
-
   useEffect(() => {
-    //IMPORTANT connects socket
+    //make sure roomId is valid
+    roomId.split("").forEach((char) => {
+      if (`~!@#$%^&*()_+{}|:"<>?-=[]\\;',./`.includes(char)) {
+        navigate("/", { replace: true });
+      }
+      if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(char)) {
+        navigate("/chat/" + roomId.toLowerCase());
+      }
+    });
+  }, [location]);
+  useEffect(() => {
+    //IMPORTANT connects socket and fetch item
     if (!fetchRef.current) {
       fetchItems().then(init).catch(fetchErrorHandler);
     } else {
       try {
         init(fetchData);
       } catch (err) {
-        fetchErrorHandler(err);
+        errorHandler(err);
       }
     }
     return socketCleanUp;
@@ -138,7 +150,7 @@ export default function ChatPage() {
     setMessage("");
     setDisabledState();
   }
-  
+
   useEffect(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
@@ -179,13 +191,23 @@ export default function ChatPage() {
                   return (
                     <Fragment key={msg._id}>
                       <span>
-                        <span className="username" title = {msg.email}>
+                        <span className="username" title={msg.email}>
                           {who && (
                             <span
                               className="profile-picture"
                               style={
-                                msg.color === "rainbow" ?  {background: "linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet)", backgroundSize: "400% 400%",animation: "rainbow 8s infinite"}  :
-                                {backgroundColor: `${msg.color || "lightgray"}`}
+                                msg.color === "rainbow"
+                                  ? {
+                                      background:
+                                        "linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet)",
+                                      backgroundSize: "400% 400%",
+                                      animation: "rainbow 8s infinite",
+                                    }
+                                  : {
+                                      backgroundColor: `${
+                                        msg.color || "lightgray"
+                                      }`,
+                                    }
                               }
                             >
                               <img src="/icons8-account-48.png" alt="pfp" />
@@ -200,10 +222,13 @@ export default function ChatPage() {
                                   msg.email.length
                                 )
                               : msg.email
-                            : ""}
+                            : ""}{" "}
                           {who && date.toLocaleDateString()}{" "}
                           {who &&
-                            date.toLocaleTimeString().slice(0, 5) +
+                            date
+                              .toLocaleTimeString()
+                              .slice(0, 5)
+                              .replace(":", "") +
                               date.toLocaleTimeString().slice(-2)}
                         </span>
                         <span
