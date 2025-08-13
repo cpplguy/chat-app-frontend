@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 function App() {
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [messagesReceived, setMessagesReceived] = useState(false);
   useEffect(() => {
     fetch(
       `${
@@ -29,23 +30,28 @@ function App() {
       }
     )
       .then((res) => {
-        if (res.status === 200) {
+        if (res.ok) {
           setIsAuth(true);
         } else {
           setIsAuth(false);
-          console.log(res);
         }
-        setLoading(false);
       })
       .catch((err) => {
         setIsAuth(false);
         console.error("Error fetching auth status:", err);
-        setLoading(false);
       });
   }, []);
+  useEffect(() => {
+    if(!isAuth || messagesReceived){
+      setLoading(false);
+    }
+    if(!messagesReceived && isAuth){
+      setLoading(true);
+    }
+  }, [isAuth, messagesReceived])
   if (loading) return <Loading/>;
   return (
-    <AuthContext.Provider value = {{isAuth, setIsAuth}}>
+    <AuthContext.Provider value = {{isAuth, setIsAuth, setMessagesReceived}}>
     <BrowserRouter>
       <Refresh/>
       <Routes>

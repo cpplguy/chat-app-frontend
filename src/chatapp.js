@@ -6,7 +6,7 @@ import AuthContext from "./authcontext.js";
 import SideBar from "./sidebar.js";
 import "./chatapp.css";
 export default function ChatPage() {
-  const { isAuth } = useContext(AuthContext);
+  const { isAuth, setMessagesReceived } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const { roomId = "main" } = useParams();
@@ -120,6 +120,11 @@ export default function ChatPage() {
     }
     return socketCleanUp;
   }, [navigate, isAuth, roomId]);
+  useEffect(() => {
+    if(messages){
+      setMessagesReceived(true);
+    }
+  }, [messages])
   function setDisabledState() {
     setDisabled(true);
     setTimeout(() => {
