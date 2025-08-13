@@ -276,9 +276,9 @@ h2{
 }
 #input-container input{
     width: 90vw;
-    height: 6vh;
+    height: 5.6vh;
     border-radius: 20px;
-    font-size: 3vh;
+    font-size: 20px;
 }
 
 #messages-container{
@@ -356,6 +356,11 @@ h2{
     cursor: default;
     background-color: gray;
 }
+@keyframes rainbow{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
 @media(max-height: 525px){
     #section-heading{
         font-size:2.1vh;
@@ -371,7 +376,7 @@ h2{
     }
     #input-container input{
         height: 5vh;
-        font-size: 2.5vh;
+        font-size: 17.5px;
     }
     #send-message{
         width: 6vh;
@@ -387,5 +392,10 @@ h2{
         height:25px;
         width:25px;
         font-size:15px;
+    }
+}
+@media(max-width:500px){
+    #input-container input{
+        width:75vw;
     }
 }

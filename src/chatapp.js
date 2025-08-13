@@ -73,8 +73,8 @@ export default function ChatPage() {
     socket.emit("request users connected");
     socket.on("connect_error", errorHandler);
   };
-  function fetchItems() {
-    return fetch(
+  async function fetchItems() {
+    const fetchApi = await fetch(
       `${
         !(process.env.REACT_APP_STATUS === "development")
           ? "/api/chat/whoami"
@@ -84,17 +84,15 @@ export default function ChatPage() {
         method: "GET",
         credentials: "include",
       }
-    ).then((res) => {
-      if (res.status === 200) {
-        return res.json();
-      } else if (res.status === 401) {
-        navigate("/", { replace: true });
-      } else {
-        throw new Error(
-          `Unexpected status code: ${res.status}, error: ${res.error}`
-        );
-      }
-    });
+    )
+    if(fetchApi.status === 200){
+      return fetchApi.json();
+    }else if(fetchApi.status === 401){
+      navigate("/", { replace: true });
+      throw new Error("Unauthorized");
+    }else{
+      throw new Error(`Unexpected status code: ${fetchApi.status}, error: ${fetchApi.error}`);
+    }
   }
 
   useEffect(() => {
@@ -175,19 +173,20 @@ export default function ChatPage() {
           <p>
             {messages?.length === 0
               ? "messages will appear here"
-              : messages.map((msg, idx) => {
+              : messages.map((msg) => {
                   const date = new Date(msg.createdAt);
                   const who = whoAmI !== msg.email;
                   return (
                     <Fragment key={msg._id}>
                       <span>
-                        <span className="username">
+                        <span className="username" title = {msg.email}>
                           {who && (
                             <span
                               className="profile-picture"
-                              style={{
-                                backgroundColor: `${msg.color || "lightgray"}`,
-                              }}
+                              style={
+                                msg.color === "rainbow" ?  {background: "linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet)", backgroundSize: "400% 400%",animation: "rainbow 8s infinite"}  :
+                                {backgroundColor: `${msg.color || "lightgray"}`}
+                              }
                             >
                               <img src="/icons8-account-48.png" alt="pfp" />
                             </span>

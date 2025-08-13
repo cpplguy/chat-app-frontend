@@ -3,10 +3,11 @@ import SignUpPage from "./signuppage.js";
 import LoginPage from "./loginpage.js";
 import ProtectedPage from "./protected.js";
 import PublicPage from "./public.js";
-import NotFound from "./notfound.js";
+import NotFound from "./misc/notfound.js";
 import ChatPage from "./chatapp.js";
 import Refresh from "./reload.js";
 import AuthContext from "./authcontext.js";
+import Loading from "./misc/loading.js"
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
 function App() {
@@ -42,7 +43,7 @@ function App() {
         setLoading(false);
       });
   }, []);
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loading/>;
   return (
     <AuthContext.Provider value = {{isAuth, setIsAuth}}>
     <BrowserRouter>
@@ -88,6 +89,7 @@ function App() {
             </ProtectedPage>
           }
         />
+        <Route path = "/reload" element = {<Loading/>}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
