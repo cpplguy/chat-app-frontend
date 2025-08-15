@@ -11,9 +11,8 @@ import Loading from "./misc/loading.js"
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
 function App() {
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState({user: null, auth: false});
   const [loading, setLoading] = useState(true);
-  const [messagesReceived, setMessagesReceived] = useState(false);
   useEffect(() => {
     fetch(
       `${
@@ -31,27 +30,20 @@ function App() {
     )
       .then((res) => {
         if (res.ok) {
-          setIsAuth(true);
+          setIsAuth({auth: true, user: res.user });
         } else {
-          setIsAuth(false);
+          setIsAuth(prev => ({...prev, auth: false}));
         }
+        setLoading(false);
       })
       .catch((err) => {
-        setIsAuth(false);
+        setIsAuth(prev => ({...prev, auth: false}));
         console.error("Error fetching auth status:", err);
       });
   }, []);
-  useEffect(() => {
-    if(!isAuth || messagesReceived){
-      setLoading(false);
-    }
-    if(!messagesReceived && isAuth){
-      setLoading(true);
-    }
-  }, [isAuth, messagesReceived])
-  if (loading) return <Loading/>;
+   if (loading) return <Loading/>;
   return (
-    <AuthContext.Provider value = {{isAuth, setIsAuth, setMessagesReceived}}>
+    <AuthContext.Provider value = {{isAuth, setIsAuth}}>
     <BrowserRouter>
       <Refresh/>
       <Routes>

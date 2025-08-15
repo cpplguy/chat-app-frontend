@@ -32,6 +32,7 @@ export default function LoginPage() {
           credentials: "include",
         }
       );
+      const data = await fet.json();
       switch (fet.status) {
         case 400:
           alert("Please enter a valid email address.");
@@ -40,12 +41,11 @@ export default function LoginPage() {
           alert("Email already exists.");
           return;
         case 429:
-          const error = await fet.json();
-          alert(error.error);
+          alert(data.error);
           return;
         case 200:
           console.log("Successful: User created.");
-          setIsAuth(true);
+          setIsAuth({auth: true, user: data.user});
           return;
         default:
           alert(`Server code: ${fet.status}. Error message: ${fet.statusText}`);

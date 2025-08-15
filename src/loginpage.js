@@ -43,7 +43,7 @@ export default function LoginPage() {
         return;
       case 200:
         const data = await fetc.json();
-        setIsAuth(true);
+        setIsAuth({auth: true, user: data.user});
         console.log("Successful: User logged in. user info: ", data);
 
         return;

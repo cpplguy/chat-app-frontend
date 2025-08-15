@@ -6,7 +6,7 @@ import AuthContext from "./authcontext.js";
 import SideBar from "./sidebar.js";
 import "./chatapp.css";
 export default function ChatPage() {
-  const { isAuth, setMessagesReceived } = useContext(AuthContext);
+  const { isAuth } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const { roomId = "main" } = useParams();
@@ -15,6 +15,7 @@ export default function ChatPage() {
   const fetchRef = useRef(false);
   //message states
   const [message, setMessage] = useState("");
+  const [messageLength, setMessageLength] = useState(0);
   const [messages, setMessages] = useState([]);
   const [whoAmI, setWhoAmI] = useState("");
   //
@@ -120,11 +121,6 @@ export default function ChatPage() {
     }
     return socketCleanUp;
   }, [navigate, isAuth, roomId]);
-  useEffect(() => {
-    if(messages){
-      setMessagesReceived(true);
-    }
-  }, [messages])
   function setDisabledState() {
     setDisabled(true);
     setTimeout(() => {
@@ -258,19 +254,19 @@ export default function ChatPage() {
           ></div>
         </div>
         <section id="input-container-container">
+          <div id = "char-count-container">
+            <p id="char-count" style={{color: messageLength > 100 ? "red" : "black"}}>{messageLength}/100</p>
+          </div>
           <div id="input-container">
             <input
               type="text"
               value={message}
               onChange={(e) => {
-                if (e.target.value.length > 100) {
-                  alert("Message cannot exceed 100 characters.");
-                  return;
-                }
                 setMessage(e.target.value);
+                setMessageLength(e.target.value.length);
               }}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && message.trim() && !disabled) {
+                if (e.key === "Enter" && message.trim() && !disabled && messageLength <= 100) {
                   sendHandler(e);
                 }
               }}
