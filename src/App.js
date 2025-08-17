@@ -7,11 +7,11 @@ import NotFound from "./misc/notfound.js";
 import ChatPage from "./chatapp.js";
 import Refresh from "./reload.js";
 import AuthContext from "./authcontext.js";
-import Loading from "./misc/loading.js"
+import Loading from "./misc/loading.js";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
 function App() {
-  const [isAuth, setIsAuth] = useState({user: null, auth: false});
+  const [isAuth, setIsAuth] = useState({ user: null, auth: false });
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetch(
@@ -30,67 +30,67 @@ function App() {
     )
       .then((res) => {
         if (res.ok) {
-          setIsAuth({auth: true, user: res.user });
+          setIsAuth({ auth: true, user: res.user });
         } else {
-          setIsAuth(prev => ({...prev, auth: false}));
+          setIsAuth((prev) => ({ ...prev, auth: false }));
         }
         setLoading(false);
       })
       .catch((err) => {
-        setIsAuth(prev => ({...prev, auth: false}));
+        setIsAuth((prev) => ({ ...prev, auth: false }));
         console.error("Error fetching auth status:", err);
       });
   }, []);
-   if (loading) return <Loading/>;
+  if (loading) return <Loading />;
   return (
-    <AuthContext.Provider value = {{isAuth, setIsAuth}}>
-    <BrowserRouter>
-      <Refresh/>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <PublicPage isAuth={isAuth}>
-              <LoginPage setIsAuth={setIsAuth} />
-            </PublicPage>
-          }
-        ></Route>
-        <Route
-          path="/signup"
-          element={
-            <PublicPage isAuth={isAuth}>
-              <SignUpPage setIsAuth={setIsAuth} />
-            </PublicPage>
-          }
-        ></Route>
-        <Route
-          path="/login"
-          element={
-            <PublicPage isAuth={isAuth}>
-              <LoginPage setIsAuth={setIsAuth} />
-            </PublicPage>
-          }
-        />
-        <Route
-          path="/chat"
-          element={
-            <ProtectedPage isAuth={isAuth}>
-              <ChatPage isAuth={isAuth} />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/chat/:roomId"
-          element={
-            <ProtectedPage isAuth={isAuth}>
-              <ChatPage isAuth={isAuth} />
-            </ProtectedPage>
-          }
-        />
-        <Route path = "/reload" element = {<Loading/>}/>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthContext.Provider value={{ isAuth, setIsAuth }}>
+      <BrowserRouter>
+        <Refresh />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <PublicPage>
+                <LoginPage />
+              </PublicPage>
+            }
+          ></Route>
+          <Route
+            path="/signup"
+            element={
+              <PublicPage>
+                <SignUpPage />
+              </PublicPage>
+            }
+          ></Route>
+          <Route
+            path="/login"
+            element={
+              <PublicPage>
+                <LoginPage />
+              </PublicPage>
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              <ProtectedPage>
+                <ChatPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/chat/:roomId"
+            element={
+              <ProtectedPage>
+                <ChatPage />
+              </ProtectedPage>
+            }
+          />
+          <Route path="/reload" element={<Loading />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
     </AuthContext.Provider>
   );
 }

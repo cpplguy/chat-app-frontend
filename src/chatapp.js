@@ -29,7 +29,7 @@ export default function ChatPage() {
     setMessages(newMessage);
   };
   const handler2 = (users) => {
-    if (!isAuth) {
+    if (!isAuth.auth) {
       navigate("/", { replace: true });
       return;
     }
@@ -254,10 +254,10 @@ export default function ChatPage() {
           ></div>
         </div>
         <section id="input-container-container">
-          <div id = "char-count-container">
-            <p id="char-count" style={{color: messageLength > 100 ? "red" : "black"}}>{messageLength}/100</p>
-          </div>
           <div id="input-container">
+            <div id = "char-count-container">
+            <p id="char-count" style={{color: messageLength > 100 ? "red" : "gainsboro"}}>{messageLength}/100</p>
+          </div>
             <input
               type="text"
               value={message}

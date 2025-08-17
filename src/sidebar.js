@@ -22,6 +22,7 @@ function RoomIdForm({ roomInput, setRoomInput, formOpened, setFormOpened }) {
         <h5>Type in the chat-room you would like to enter. (Default chat-room is Main.)</h5>
         <label>
           Room Name:
+          <div style = {{display: "flex", flexDirection: "row", alignItems: "center"}}>
           <input
           onKeyDown={onKeyDownHandler}
             value={roomInput}
@@ -39,6 +40,7 @@ function RoomIdForm({ roomInput, setRoomInput, formOpened, setFormOpened }) {
           >
             X
           </button>
+          </div>
         </label>
         <button type="submit">Join Room</button>
       </form>

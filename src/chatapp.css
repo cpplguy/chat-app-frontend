@@ -155,6 +155,7 @@ body{
     background: linear-gradient(#e66465, #9198e5);
     width:100%;
     font-size:3vh;
+    box-shadow:0px 11px 15px -3px black;
 }
 #room-container{
     display:none;
@@ -176,12 +177,21 @@ body{
     justify-content:center;
     align-items:center;
 }
+#room-container form input{
+    margin-top:1.5vh;
+    margin-bottom:2vh;
+    width:25vw;
+    height:5vh;
+    font-size:2vh;
+    border-radius:10px;
+    border:0.5px solid gray;
+    padding-left:1vh;
+}
 #room-container form [type="submit"]{
     background-color:green;
-    margin-top:5vh;
-    width:max(15vh, 7vw);
-    height:max(7.5vh, 7vw);
-    font-size:max(2.75vh, 2vw);
+    width:min(15vh, 7vw);
+    height:min(7.5vh, 7vw);
+    font-size:min(2.75vh, 2vw);
     text-align:center;
 }
 #room-container form h5{
@@ -255,7 +265,7 @@ h2{
     width: 6vh;
     border-radius: 50%;
     z-index:0;
-    border: 1px solid blue;
+    border: 0.5px solid blue;
     cursor: pointer;
 }
 #send-message h1{
@@ -280,7 +290,22 @@ h2{
     border-radius: 20px;
     font-size: 20px;
 }
-
+#char-count-container{
+    display:flex;
+    position:fixed;
+    justify-content:flex-end;
+    width:90vw;
+    margin: 0 auto;
+    bottom:calc(15px + 1vh);
+}
+#char-count{
+    position:relative;
+    bottom:1.5vh;
+    right:3vw;
+    font-size: 15px;
+    color: lightgray;
+    font-family: "Inter", sans-serif;
+}
 #messages-container{
     display: flex;
     z-index: 1;
@@ -396,6 +421,9 @@ h2{
 }
 @media(max-width:500px){
     #input-container input{
+        width:82.5vw;
+    }
+    #char-count-container{
         width:75vw;
     }
 }
