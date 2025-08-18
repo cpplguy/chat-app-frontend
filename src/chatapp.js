@@ -157,7 +157,8 @@ export default function ChatPage() {
             {messages?.length === 0
               ? "messages will appear here"
               : messages.map((msg) => {
-                  const date = new Date(msg.createdAt);
+                  const date = new Date(msg.createdAt).toLocaleDateString();
+                  const time = new Date(msg.createdAt).toLocaleTimeString();
                   const who = whoAmI !== msg.email;
                   return (
                     <Fragment key={msg._id}>
@@ -194,13 +195,11 @@ export default function ChatPage() {
                                 )
                               : msg.email
                             : ""}{" "}
-                          {who && date.toLocaleDateString()}{" "}
+                          {who && date}{" "}
                           {who &&
-                            date
-                              .toLocaleTimeString()
-                              .slice(0, 5)
-                              .replace(":", "") +
-                              date.toLocaleTimeString().slice(-2)}
+                            time
+                              .slice(0, +time.slice(0,2) ? 5:4) +
+                              time.slice(-2).replace(":","")}
                         </span>
                         <span
                           className={`${
