@@ -8,13 +8,16 @@ import ChatPage from "./chatapp.js";
 import Refresh from "./reload.js";
 import AuthContext from "./authcontext.js";
 import Loading from "./misc/loading.js";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 function App() {
-  const [isAuth, setIsAuth] = useState({ user: null, auth: false });
+  const [isAuth, setIsAuth] = useState({ user: null, token: null, auth: false });
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
   useEffect(() => {
-    fetch(
+    (async() => {
+    try{
+    const fetchAuth = await fetch(
       `${
         !(process.env.REACT_APP_STATUS === "development")
           ? "/api/auth"
@@ -28,23 +31,27 @@ function App() {
         },
       }
     )
-      .then((res) => {
-        if (res.ok) {
-          setIsAuth({ auth: true, user: res.user });
+        if (fetchAuth.ok) {
+          const fetchAuthData = await fetchAuth.json();
+          setIsAuth({ auth: true, user: fetchAuthData.user, token: fetchAuthData.token });
         } else {
+          console.log("Not authenticated, status code: ", fetchAuth.status);
           setIsAuth((prev) => ({ ...prev, auth: false }));
+          
         }
         setLoading(false);
-      })
-      .catch((err) => {
+      }
+      catch(err) {
         setIsAuth((prev) => ({ ...prev, auth: false }));
         console.error("Error fetching auth status:", err);
-      });
-  }, []);
+        setLoading(false);
+      }
+    }
+    )()
+  }, [location]);
   if (loading) return <Loading />;
   return (
     <AuthContext.Provider value={{ isAuth, setIsAuth }}>
-      <BrowserRouter>
         <Refresh />
         <Routes>
           <Route
@@ -90,7 +97,6 @@ function App() {
           <Route path="/reload" element={<Loading />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
     </AuthContext.Provider>
   );
 }

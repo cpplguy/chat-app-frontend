@@ -12,7 +12,6 @@ export default function ChatPage() {
   const { roomId = "main" } = useParams();
   const bottomRef = useRef(null);
   const socketRef = useRef(null);
-  const fetchRef = useRef(false);
   //message states
   const [message, setMessage] = useState("");
   const [messageLength, setMessageLength] = useState(0);
@@ -23,8 +22,6 @@ export default function ChatPage() {
   const [peopleOnline, setPeopleOnline] = useState(0);
 
   const [usernames, setUsernames] = useState(["No One"]);
-
-  const [fetchData, setFetchData] = useState({});
   const handler = (newMessage) => {
     setMessages(newMessage);
   };
@@ -40,9 +37,6 @@ export default function ChatPage() {
   };
   const errorHandler = (err) => {
     console.error("error has happened while connecting. Error : ", err);
-  };
-  const fetchErrorHandler = (err) => {
-    console.error("Error fetching, err: ", err);
     socketCleanUp();
   };
   const socketCleanUp = () => {
@@ -59,13 +53,11 @@ export default function ChatPage() {
       socket.disconnect();
     }
   };
-  const init = (data) => {
-    setFetchData(data);
-    setWhoAmI(data.email);
-    if (!data.token) throw new Error("No token provided.");
-    const socket = createSocket(data.token);
+  const init = () => {
+    setWhoAmI(isAuth.user.email);
+    if (!isAuth.token) throw new Error("No token provided.");
+    const socket = createSocket(isAuth.token);
     socketRef.current = socket;
-    fetchRef.current = true;
     socket.connect();
     socket.emit("join room", roomId || "main");
     socket.on("users connected", handler2);
@@ -74,51 +66,21 @@ export default function ChatPage() {
     socket.emit("request users connected");
     socket.on("connect_error", errorHandler);
   };
-  async function fetchItems() {
-    const fetchApi = await fetch(
-      `${
-        !(process.env.REACT_APP_STATUS === "development")
-          ? "/api/chat/whoami"
-          : process.env.REACT_APP_SERVER + "/api/chat/whoami"
-      }`,
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    );
-    if (fetchApi.status === 200) {
-      return fetchApi.json();
-    } else if (fetchApi.status === 401) {
-      navigate("/", { replace: true });
-      throw new Error("Unauthorized");
-    } else {
-      throw new Error(
-        `Unexpected status code: ${fetchApi.status}, error: ${fetchApi.error}`
-      );
-    }
-  }
   useEffect(() => {
     //make sure roomId is valid
-    roomId.split("").forEach((char) => {
-      if (`~!@#$%^&*()_+{}|:"<>?-=[]\\;',./`.includes(char)) {
+      if (/[^a-z0-9]/.test(roomId)) {
         navigate("/", { replace: true });
       }
-      if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(char)) {
+      if (/[A-Z]/.test(roomId)) {
         navigate("/chat/" + roomId.toLowerCase());
       }
-    });
   }, [location]);
   useEffect(() => {
-    //IMPORTANT connects socket and fetch item
-    if (!fetchRef.current) {
-      fetchItems().then(init).catch(fetchErrorHandler);
-    } else {
       try {
-        init(fetchData);
+        init();
       } catch (err) {
         errorHandler(err);
       }
-    }
     return socketCleanUp;
   }, [navigate, isAuth, roomId]);
   function setDisabledState() {
