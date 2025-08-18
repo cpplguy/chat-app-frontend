@@ -155,7 +155,7 @@ body{
     background: linear-gradient(#e66465, #9198e5);
     width:100%;
     font-size:3vh;
-    box-shadow:0px 11px 15px -3px black;
+    box-shadow:0 11px 15px -3px ;
 }
 #room-container{
     display:none;
@@ -283,6 +283,7 @@ h2{
     justify-content:center;
     position: fixed;
     bottom:0;
+    z-index:50000;
 }
 #input-container input{
     width: 90vw;
@@ -296,7 +297,8 @@ h2{
     justify-content:flex-end;
     width:90vw;
     margin: 0 auto;
-    bottom:calc(15px + 1vh);
+    bottom:50px;
+    height:2vh;
 }
 #char-count{
     position:relative;
@@ -417,6 +419,13 @@ h2{
         height:25px;
         width:25px;
         font-size:15px;
+    }
+    #char-count-container{
+        bottom:50px;
+    }
+    #char-count{
+        right:2.5vw;
+        font-size: 12px;
     }
 }
 @media(max-width:500px){

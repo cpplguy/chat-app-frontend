@@ -4,6 +4,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import createSocket from "./socket.js";
 import AuthContext from "./authcontext.js";
 import SideBar from "./sidebar.js";
+import he from "he";
 import "./chatapp.css";
 export default function ChatPage() {
   const { isAuth } = useContext(AuthContext);
@@ -35,6 +36,12 @@ export default function ChatPage() {
   const handler3 = (length) => {
     setPeopleOnline(length);
   };
+  const connectHandler = () => {
+    const socket = socketRef.current;
+    console.log("connected to socket server");
+    socket.emit("join room", roomId || "main");
+    socket.emit("request users connected");
+  };
   const errorHandler = (err) => {
     console.error("error has happened while connecting. Error : ", err);
     socketCleanUp();
@@ -42,6 +49,7 @@ export default function ChatPage() {
   const socketCleanUp = () => {
     if (socketRef.current) {
       const socket = socketRef.current;
+      socket.off("connect", connectHandler);
       socket.off("chat message", handler);
 
       socket.off("users connected", handler2);
@@ -50,44 +58,39 @@ export default function ChatPage() {
 
       socket.off("connect_error", errorHandler);
 
-      socket.disconnect();
+      //socket.disconnect();
     }
   };
   const init = () => {
-    try{
-    setWhoAmI(isAuth.user.email);
-    if (!isAuth.token) throw new Error("No token provided.");
-    const socket = createSocket(isAuth.token);
-    socketRef.current = socket;
-    socket.connect();
-    socket.emit("join room", roomId || "main");
-    socket.on("users connected", handler2);
-    socket.on("chat message", handler);
-    socket.on("users online", handler3);
-    socket.emit("request users connected");
-    socket.on("connect_error", errorHandler);
-    }catch(err){
-      console.error("Error during init: ", err);
-      navigate("/", { replace: true });
-    }
-  };
-  useEffect(() => {
-    //make sure roomId is valid
+    try {
       if (/[^a-z0-9]/.test(roomId)) {
         navigate("/", { replace: true });
       }
       if (/[A-Z]/.test(roomId)) {
         navigate("/chat/" + roomId.toLowerCase());
       }
+      setWhoAmI(isAuth.user.email);
+      if (!isAuth.token) throw new Error("No token provided.");
+      const socket = createSocket({auth:isAuth.token});
+      socketRef.current = socket;
+      socket.on("connect", connectHandler);
+      socket.on("users connected", handler2);
+      socket.on("chat message", handler);
+      socket.on("users online", handler3);
+      socket.on("connect_error", errorHandler);
+      socket.connect();
+    } catch (err) {
+      console.error("Error during init: ", err);
+      navigate("/", { replace: true });
+    }
+  };
+  useEffect(() => {
+    //make sure roomId is valid
   }, [location]);
   useEffect(() => {
-      try {
-        init();
-      } catch (err) {
-        errorHandler(err);
-      }
-    return socketCleanUp;
-  }, [navigate, isAuth, roomId]);
+    init();
+    return ()=>socketCleanUp();
+  }, [roomId, isAuth?.email, isAuth?.token]);
   function setDisabledState() {
     setDisabled(true);
     setTimeout(() => {
@@ -206,7 +209,7 @@ export default function ChatPage() {
                               : "client message"
                           }`}
                         >
-                          {msg.text}
+                          {he.decode(msg.text)}
                         </span>
                       </span>
                       <br />
@@ -222,9 +225,14 @@ export default function ChatPage() {
         </div>
         <section id="input-container-container">
           <div id="input-container">
-            <div id = "char-count-container">
-            <p id="char-count" style={{color: messageLength > 100 ? "red" : "gainsboro"}}>{messageLength}/100</p>
-          </div>
+            <div id="char-count-container">
+              <p
+                id="char-count"
+                style={{ color: messageLength > 100 ? "red" : "gainsboro" }}
+              >
+                {messageLength}/100
+              </p>
+            </div>
             <input
               type="text"
               value={message}
@@ -233,7 +241,12 @@ export default function ChatPage() {
                 setMessageLength(e.target.value.length);
               }}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && message.trim() && !disabled && messageLength <= 100) {
+                if (
+                  e.key === "Enter" &&
+                  message.trim() &&
+                  !disabled &&
+                  messageLength <= 100
+                ) {
                   sendHandler(e);
                 }
               }}
