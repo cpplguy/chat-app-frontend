@@ -54,6 +54,7 @@ export default function ChatPage() {
     }
   };
   const init = () => {
+    try{
     setWhoAmI(isAuth.user.email);
     if (!isAuth.token) throw new Error("No token provided.");
     const socket = createSocket(isAuth.token);
@@ -65,6 +66,10 @@ export default function ChatPage() {
     socket.on("users online", handler3);
     socket.emit("request users connected");
     socket.on("connect_error", errorHandler);
+    }catch(err){
+      console.error("Error during init: ", err);
+      navigate("/", { replace: true });
+    }
   };
   useEffect(() => {
     //make sure roomId is valid
