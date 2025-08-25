@@ -2,6 +2,11 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./authcontext.js";
 export default function LoginPage() {
+  const backendPath = `${
+          !(process.env.REACT_APP_STATUS === "development")
+            ? "/api/users/login"
+            : process.env.REACT_APP_SERVER + "/api/users/login"
+        }`
   const {setIsAuth} = useContext(AuthContext);
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -17,7 +22,7 @@ export default function LoginPage() {
       return;
     }
     const fetc = await fetch(
-      `${!(process.env.REACT_APP_STATUS==='development') ? '/api/users/login' : process.env.REACT_APP_SERVER + "/api/users/login"}`,
+      backendPath,
       {
         method: "POST",
         credentials: "include",
@@ -43,8 +48,8 @@ export default function LoginPage() {
         return;
       case 200:
         const data = await fetc.json();
-        setIsAuth({auth: true, user: data.user});
-        console.log("Successful: User logged in. user info: ", data);
+        setIsAuth({auth: true, user: data.user, token: data.token});
+        console.log("Successful: User logged in.");
 
         return;
       default:

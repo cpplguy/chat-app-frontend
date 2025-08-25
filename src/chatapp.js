@@ -4,6 +4,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import createSocket from "./socket.js";
 import AuthContext from "./authcontext.js";
 import SideBar from "./sidebar.js";
+import Loading from "./misc/loading.js";
 import he from "he";
 import "./chatapp.css";
 export default function ChatPage() {
@@ -58,7 +59,7 @@ export default function ChatPage() {
 
       socket.off("connect_error", errorHandler);
 
-      //socket.disconnect();
+      socket.disconnect();
     }
   };
   const init = () => {
@@ -69,9 +70,9 @@ export default function ChatPage() {
       if (/[A-Z]/.test(roomId)) {
         navigate("/chat/" + roomId.toLowerCase());
       }
-      setWhoAmI(isAuth.user.email);
+      setWhoAmI(isAuth.user);
       if (!isAuth.token) throw new Error("No token provided.");
-      const socket = createSocket({auth:isAuth.token});
+      const socket = createSocket({ auth: isAuth.token });
       socketRef.current = socket;
       socket.on("connect", connectHandler);
       socket.on("users connected", handler2);
@@ -89,7 +90,7 @@ export default function ChatPage() {
   }, [location]);
   useEffect(() => {
     init();
-    return ()=>socketCleanUp();
+    return () => socketCleanUp();
   }, [roomId, isAuth?.email, isAuth?.token]);
   function setDisabledState() {
     setDisabled(true);
@@ -127,6 +128,7 @@ export default function ChatPage() {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+  if (!socketRef.current) return <Loading />;
   return (
     <>
       <SideBar usernames={usernames} />
@@ -157,8 +159,9 @@ export default function ChatPage() {
             {messages?.length === 0
               ? "messages will appear here"
               : messages.map((msg) => {
-                  const date = new Date(msg.createdAt).toLocaleDateString();
-                  const time = new Date(msg.createdAt).toLocaleTimeString();
+                const d = new Date(msg.createdAt);
+                  const date = d.toLocaleDateString();
+                  const time = d.toLocaleTimeString();
                   const who = whoAmI !== msg.email;
                   return (
                     <Fragment key={msg._id}>
@@ -197,9 +200,8 @@ export default function ChatPage() {
                             : ""}{" "}
                           {who && date}{" "}
                           {who &&
-                            time
-                              .slice(0, +time.slice(0,2) ? 5:4) +
-                              time.slice(-2).replace(":","")}
+                            time.slice(0, +time.slice(0, 2) ? 5 : 4) +
+                              time.slice(-2).replace(":", "")}
                         </span>
                         <span
                           className={`${

@@ -2,7 +2,12 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./authcontext.js";
 export default function LoginPage() {
-  const {setIsAuth} = useContext(AuthContext);
+  const backendPath = `${
+    !(process.env.REACT_APP_STATUS === "development")
+      ? "/api/users/signup"
+      : process.env.REACT_APP_SERVER + "/api/users/signup"
+  }`;
+  const { setIsAuth } = useContext(AuthContext);
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const navigate = useNavigate();
@@ -17,21 +22,14 @@ export default function LoginPage() {
     }
 
     try {
-      const fet = await fetch(
-        `${
-          !(process.env.REACT_APP_STATUS === "development")
-            ? "/api/users/postUserInfo"
-            : process.env.REACT_APP_SERVER + "/api/users/postUserInfo"
-        }`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(obj),
-          credentials: "include",
-        }
-      );
+      const fet = await fetch(backendPath, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(obj),
+        credentials: "include",
+      });
       const data = await fet.json();
       switch (fet.status) {
         case 400:
@@ -43,9 +41,9 @@ export default function LoginPage() {
         case 429:
           alert(data.error);
           return;
-        case 200:
+        case 201:
           console.log("Successful: User created.");
-          setIsAuth({auth: true, user: data.user});
+          setIsAuth({ auth: true, user: data.user, token: data.token });
           return;
         default:
           alert(`Server code: ${fet.status}. Error message: ${fet.statusText}`);
@@ -64,9 +62,8 @@ export default function LoginPage() {
         </h1>
       </div>
       <form
-      className = "form"
+        className="form"
         onSubmit={(e) => {
-          console.log("ddd");
           e.preventDefault();
           postCredentials({ name: name, password: pass });
         }}
@@ -80,7 +77,9 @@ export default function LoginPage() {
             type="email"
             value={name}
             placeholder="Type email address..."
-            onChange={(e) => e.target.value.length < 254 && setName(e.target.value)}
+            onChange={(e) =>
+              e.target.value.length < 254 && setName(e.target.value)
+            }
             required
           />
           <button
