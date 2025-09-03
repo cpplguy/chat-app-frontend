@@ -86,12 +86,9 @@ export default function ChatPage() {
     }
   };
   useEffect(() => {
-    //make sure roomId is valid
-  }, [location]);
-  useEffect(() => {
     init();
     return () => socketCleanUp();
-  }, [roomId, isAuth?.email, isAuth?.token]);
+  }, [roomId, isAuth?.token]);
   function setDisabledState() {
     setDisabled(true);
     setTimeout(() => {
@@ -205,7 +202,7 @@ export default function ChatPage() {
                         </span>
                         <span
                           className={`${
-                            whoAmI === msg.email
+                            !who
                               ? "user message"
                               : "client message"
                           }`}
