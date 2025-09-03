@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef, useContext, Fragment } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import createSocket from "./socket.js";
 import AuthContext from "./authcontext.js";
 import SideBar from "./sidebar.js";
@@ -9,7 +9,6 @@ import he from "he";
 import "./chatapp.css";
 export default function ChatPage() {
   const { isAuth } = useContext(AuthContext);
-  const location = useLocation();
   const navigate = useNavigate();
   const { roomId = "main" } = useParams();
   const bottomRef = useRef(null);

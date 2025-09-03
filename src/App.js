@@ -6,7 +6,6 @@ import RestrictedPage from "./restricted.js";
 import PublicPage from "./public.js";
 import NotFound from "./misc/notfound.js";
 import ChatPage from "./chatapp.js";
-import Refresh from "./reload.js";
 import AuthContext from "./authcontext.js";
 import Loading from "./misc/loading.js";
 import BannedPage from "./misc/banned.js";
@@ -89,7 +88,6 @@ function App() {
     <AuthContext.Provider
       value={{ isAuth, setIsAuth, bannedToken, bannedMessage }}
     >
-      <Refresh />
       <Routes>
         <Route
           path="/"
