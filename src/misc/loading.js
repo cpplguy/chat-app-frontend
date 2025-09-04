@@ -18,7 +18,7 @@ export default function Loading() {
   return (
     <>
     <div id = "loading-container">
-      <div id="loading-circle" />
+      <div id="loading-circle" style = {{transform: `rotate(${Math.random() * 360}deg)`}} />
         <h1>Loading{".".repeat(dots)}</h1>
         <h2 style = {{display: takingAWhile ? "block" : "none"}}>This might take a while.</h2>
       </div>
