@@ -4,7 +4,7 @@ import AuthContext from "./authcontext.js";
 export default function LoginPage() {
   const backendPath = `${
     !(process.env.REACT_APP_STATUS === "development")
-      ? "/api/users/signup"
+      ? "/api/users/postUserInfo"
       : process.env.REACT_APP_SERVER + "/api/users/postUserInfo"
   }`;
   const { setIsAuth } = useContext(AuthContext);
