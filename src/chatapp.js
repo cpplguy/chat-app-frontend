@@ -214,6 +214,7 @@ export default function ChatPage() {
                             !who ? "user message" : "client message"
                           }`}
                           onMouseEnter={() => setMessageViewedIndex(idx)}
+                          onMouseLeave={() => setMessageViewedIndex(null)}
                         >
                           {messageViewedIndex === idx
                             ? userMessage
