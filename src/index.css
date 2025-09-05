@@ -13,11 +13,11 @@ nav{
   position:fixed;
   align-items:end;
   justify-content:end;
-  left:calc(100vw - 13.5vh);
+  left:calc(100vw - 70px);
 }
 nav button{
   display:flex;
-  width: 13.5vh;
+  width: 70px;
   height:7.5vh;
   background: linear-gradient(135deg, #06b6d4, #3b82f6);
   color: black;

@@ -1,6 +1,8 @@
 import { useContext } from "react";
-import AuthContext from "./authcontext";
+import {useNavigate} from "react-router-dom";
+import AuthContext from "../authcontext";
 export default function NavBar() {
+  const navigate = useNavigate();
   const backendPath = `${
     !(process.env.REACT_APP_STATUS === "development")
       ? "/api/users/logout"
@@ -27,6 +29,8 @@ export default function NavBar() {
         <button id="logout" onClick={deleteCookies}>
           <h3>Log Out</h3>
         </button>
+        <button onClick = {() => navigate("/about")}>About</button>
+          
       </nav>
     );
   }

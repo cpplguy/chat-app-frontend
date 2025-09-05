@@ -10,7 +10,8 @@ import AuthContext from "./authcontext.js";
 import Loading from "./misc/loading.js";
 import BannedPage from "./misc/banned.js";
 import Dashboard from "./admin/dashboard.js";
-import NavBar from "./navbar.js";
+import NavBar from "./misc/navbar.js";
+import About from "./misc/about.js";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 function App() {
@@ -144,6 +145,7 @@ function App() {
         />
         <Route path="/reload" element={<Loading />} />
         <Route path="/bannedPage" element={<BannedPage />} />
+        <Route path = "/about" element = {<About/>}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AuthContext.Provider>
