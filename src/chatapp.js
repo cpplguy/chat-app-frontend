@@ -19,7 +19,6 @@ export default function ChatPage() {
   const [messages, setMessages] = useState([]);
   const [whoAmI, setWhoAmI] = useState("");
   //
-  const [socketConnected, setSocketConnected] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [peopleOnline, setPeopleOnline] = useState(0);
 
@@ -80,7 +79,6 @@ export default function ChatPage() {
       socket.on("users online", handler3);
       socket.on("connect_error", errorHandler);
       socket.connect();
-      setSocketConnected(true);
     } catch (err) {
       console.error("Error during init: ", err);
       navigate("/", { replace: true });
@@ -126,7 +124,7 @@ export default function ChatPage() {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-  if (!socketConnected) return <Loading />;
+  if (!peopleOnline) return <Loading />; // uses peopleOnline to determine whether page has loaded. Much better than a seperate usestate.
   return (
     <>
       <SideBar usernames={usernames} />
