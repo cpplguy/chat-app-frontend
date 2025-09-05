@@ -6,7 +6,9 @@ import AuthContext from "./authcontext.js";
 import SideBar from "./sidebar.js";
 import Loading from "./misc/loading.js";
 import he from "he";
+import { Filter } from "bad-words";
 import "./chatapp.css";
+const filter = new Filter();
 export default function ChatPage() {
   const { isAuth } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -18,73 +20,75 @@ export default function ChatPage() {
   const [messageLength, setMessageLength] = useState(0);
   const [messages, setMessages] = useState([]);
   const [whoAmI, setWhoAmI] = useState("");
+  const [messageViewedIndex, setMessageViewedIndex] = useState(null);
   //
   const [disabled, setDisabled] = useState(false);
   const [peopleOnline, setPeopleOnline] = useState(0);
 
   const [usernames, setUsernames] = useState(["No One"]);
-  const handler = (newMessage) => {
-    setMessages(newMessage);
-  };
-  const handler2 = (users) => {
-    if (!isAuth.auth) {
-      navigate("/", { replace: true });
-      return;
-    }
-    setUsernames(users);
-  };
-  const handler3 = (length) => {
-    setPeopleOnline(length);
-  };
-  const connectHandler = () => {
-    const socket = socketRef.current;
-    console.log("connected to socket server");
-    socket.emit("join room", roomId || "main");
-    socket.emit("request users connected");
-  };
-  const errorHandler = (err) => {
-    console.error("error has happened while connecting. Error : ", err);
-    socketCleanUp();
-  };
-  const socketCleanUp = () => {
-    if (socketRef.current) {
+
+  useEffect(() => {
+    const handler = (newMessage) => {
+      setMessages(newMessage);
+    };
+    const handler2 = (users) => {
+      if (!isAuth.auth) {
+        navigate("/", { replace: true });
+        return;
+      }
+      setUsernames(users);
+    };
+    const handler3 = (length) => {
+      setPeopleOnline(length);
+    };
+    const connectHandler = () => {
       const socket = socketRef.current;
-      socket.off("connect", connectHandler);
-      socket.off("chat message", handler);
+      console.log("connected to socket server");
+      socket.emit("join room", roomId || "main");
+      socket.emit("request users connected");
+    };
+    const errorHandler = (err) => {
+      console.error("error has happened while connecting. Error : ", err);
+      socketCleanUp();
+    };
+    const socketCleanUp = () => {
+      if (socketRef.current) {
+        const socket = socketRef.current;
+        socket.off("connect", connectHandler);
+        socket.off("chat message", handler);
 
-      socket.off("users connected", handler2);
+        socket.off("users connected", handler2);
 
-      socket.off("users online", handler3);
+        socket.off("users online", handler3);
 
-      socket.off("connect_error", errorHandler);
+        socket.off("connect_error", errorHandler);
 
-      socket.disconnect();
-    }
-  };
-  const init = () => {
-    try {
-      if (/[^a-z0-9]/.test(roomId)) {
+        socket.disconnect();
+      }
+    };
+    const init = () => {
+      try {
+        if (/[^a-z0-9]/.test(roomId)) {
+          navigate("/", { replace: true });
+        }
+        if (/[A-Z]/.test(roomId)) {
+          navigate("/chat/" + roomId.toLowerCase());
+        }
+        setWhoAmI(isAuth.user);
+        if (!isAuth.token) throw new Error("No token provided.");
+        const socket = createSocket({ auth: isAuth.token });
+        socketRef.current = socket;
+        socket.on("connect", connectHandler);
+        socket.on("users connected", handler2);
+        socket.on("chat message", handler);
+        socket.on("users online", handler3);
+        socket.on("connect_error", errorHandler);
+        socket.connect();
+      } catch (err) {
+        console.error("Error during init: ", err);
         navigate("/", { replace: true });
       }
-      if (/[A-Z]/.test(roomId)) {
-        navigate("/chat/" + roomId.toLowerCase());
-      }
-      setWhoAmI(isAuth.user);
-      if (!isAuth.token) throw new Error("No token provided.");
-      const socket = createSocket({ auth: isAuth.token });
-      socketRef.current = socket;
-      socket.on("connect", connectHandler);
-      socket.on("users connected", handler2);
-      socket.on("chat message", handler);
-      socket.on("users online", handler3);
-      socket.on("connect_error", errorHandler);
-      socket.connect();
-    } catch (err) {
-      console.error("Error during init: ", err);
-      navigate("/", { replace: true });
-    }
-  };
-  useEffect(() => {
+    };
     init();
     return () => socketCleanUp();
   }, [roomId, isAuth?.token]);
@@ -105,6 +109,7 @@ export default function ChatPage() {
     });
   };
   function sendHandler(e) {
+    if(disabled) return;
     e.preventDefault();
     if (message.trim() === "") {
       alert("Message cannot be empty.");
@@ -154,8 +159,13 @@ export default function ChatPage() {
           <p>
             {messages?.length === 0
               ? "messages will appear here"
-              : messages.map((msg) => {
-                const d = new Date(msg.createdAt);
+              : messages.map((msg, idx) => {
+                  const userMessage = he.decode(msg.text);
+                  const filteredMessage =
+                    (filter.isProfane(userMessage) &&
+                      filter.clean(userMessage)) ||
+                    userMessage;
+                  const d = new Date(msg.createdAt);
                   const date = d.toLocaleDateString();
                   const time = d.toLocaleTimeString();
                   const who = whoAmI !== msg.email;
@@ -201,12 +211,13 @@ export default function ChatPage() {
                         </span>
                         <span
                           className={`${
-                            !who
-                              ? "user message"
-                              : "client message"
+                            !who ? "user message" : "client message"
                           }`}
+                          onMouseEnter={() => setMessageViewedIndex(idx)}
                         >
-                          {he.decode(msg.text)}
+                          {messageViewedIndex === idx
+                            ? userMessage
+                            : filteredMessage}
                         </span>
                       </span>
                       <br />
