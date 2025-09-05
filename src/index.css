@@ -8,6 +8,26 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+nav{
+  display:flex;
+  position:fixed;
+  align-items:end;
+  justify-content:end;
+  left:calc(100vw - 13.5vh);
+}
+nav button{
+  display:flex;
+  width: 13.5vh;
+  height:7.5vh;
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  color: black;
+  justify-content:center;
+  align-items:center;
+}
+nav button h3{
+font-size: 3vh;
+font-weight:400;
+}
 #not-found-container {
   display: flex;
   flex-direction: column;
