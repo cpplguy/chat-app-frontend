@@ -21,6 +21,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState([]);
   const [whoAmI, setWhoAmI] = useState("");
   const [messageViewedIndex, setMessageViewedIndex] = useState(null);
+  // eslint-disable-next-line
   const [amountOfMessages, setAmountOfMessages] = useState(0);
   //
   const [disabled, setDisabled] = useState(false);
