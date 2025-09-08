@@ -383,6 +383,18 @@ h2{
     cursor: default;
     background-color: gray;
 }
+#message-length-container-container{
+    display:flex;
+    align-items:start;
+    position:absolute;
+}
+#message-length-container{
+    display:flex;
+    justify-content:flex-end;
+    
+    justify-content:start;
+    border: 1px solid red;
+}
 @keyframes rainbow{
     0%{background-position:0% 50%;}
     50%{background-position:100% 50%;}
@@ -399,7 +411,8 @@ h2{
     transform:translateY(-5vh);
 }
     #messages-container{
-        max-height: 60vh;
+        max-height: 70vh;
+        margin-top:-10px;
     }
     #input-container input{
         height: 5vh;
@@ -434,5 +447,12 @@ h2{
     }
     #char-count-container{
         width:75vw;
+    }
+    #messages-container{
+        margin-bottom:10vh;
+    }
+    header{
+        padding: 0;
+        margin:0;
     }
 }

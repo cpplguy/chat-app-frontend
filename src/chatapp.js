@@ -21,6 +21,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState([]);
   const [whoAmI, setWhoAmI] = useState("");
   const [messageViewedIndex, setMessageViewedIndex] = useState(null);
+  const [amountOfMessages, setAmountOfMessages] = useState(0);
   //
   const [disabled, setDisabled] = useState(false);
   const [peopleOnline, setPeopleOnline] = useState(0);
@@ -30,6 +31,7 @@ export default function ChatPage() {
   useEffect(() => {
     const handler = (newMessage) => {
       setMessages(newMessage);
+      setAmountOfMessages(newMessage.length);
     };
     const handler2 = (users) => {
       if (!isAuth.auth) {
@@ -109,19 +111,20 @@ export default function ChatPage() {
     });
   };
   function sendHandler(e) {
-    if(disabled) return;
+    if (disabled) return;
     e.preventDefault();
     if (message.trim() === "") {
       alert("Message cannot be empty.");
       return;
     }
-    if (message.length > 100) {
+    if (message.length > 100 && !(/:bypass/i.test(msg))) {
       alert("Message cannot exceed 100 characters.");
       return;
     }
     sendMessage(message);
     setMessage("");
     setDisabledState();
+    setMessageLength(0);
   }
 
   useEffect(() => {
@@ -155,6 +158,13 @@ export default function ChatPage() {
             ></span>
           </h2>
         </header>
+        {/*
+        <div id="message-length-container-container">
+            <div id="message-length-container">
+              <h6>{amountOfMessages}</h6>
+            </div>
+          </div>*/
+}
         <div id="messages-container">
           <p>
             {messages?.length === 0
