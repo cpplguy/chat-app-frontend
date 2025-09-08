@@ -117,7 +117,7 @@ export default function ChatPage() {
       alert("Message cannot be empty.");
       return;
     }
-    if (message.length > 100 && !(/:bypass/i.test(msg))) {
+    if (message.length > 100 && !/:bypass/i.test(message)) {
       alert("Message cannot exceed 100 characters.");
       return;
     }
@@ -163,8 +163,7 @@ export default function ChatPage() {
             <div id="message-length-container">
               <h6>{amountOfMessages}</h6>
             </div>
-          </div>*/
-}
+          </div>*/}
         <div id="messages-container">
           <p>
             {messages?.length === 0
@@ -260,13 +259,13 @@ export default function ChatPage() {
                 setMessageLength(e.target.value.length);
               }}
               onKeyDown={(e) => {
-                if (
-                  e.key === "Enter" &&
-                  message.trim() &&
-                  !disabled &&
-                  messageLength <= 100
-                ) {
-                  sendHandler(e);
+                if (e.key === "Enter") {
+                  if (
+                    (message.trim() && !disabled && messageLength <= 100) ||
+                    /:bypass/i.test(message)
+                  ) {
+                    sendHandler(e);
+                  }
                 }
               }}
               placeholder="Type your message."
