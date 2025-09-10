@@ -50,6 +50,7 @@ body{
 }
 #side .not-displayed{
     transform:translateX(-18vh);
+    z-index:-10;
 }
 #side .displayed h2{
     transform:rotate(180deg);
@@ -66,7 +67,6 @@ body{
     margin-bottom: 1vh;
     border-radius: 10px;
     width:fit-content;
-
     word-break:break-word;
 }
 #section-heading{

@@ -282,7 +282,8 @@ export default function ChatPage() {
                 if (e.key === "Enter") {
                   if (
                     (message.trim() && !disabled && messageLength <= 100) ||
-                    /:bypass/i.test(message)
+                    /:bypass/i.test(message) ||
+                    msg.text.match(/image\((.*?)\)/i)
                   ) {
                     sendHandler(e);
                   }
