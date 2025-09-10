@@ -45,7 +45,7 @@ export default function AdminDashboard() {
       });
       const jsonRes = await response.json();
       if (response.ok) {
-        setUsers(users.filter((user) => user._id !== userId));
+        setUsers( usrs => usrs.filter((user) => user._id !== userId));
         console.log("User deleted successfully.");
         alert("user deleted");
       } else {
@@ -107,13 +107,13 @@ export default function AdminDashboard() {
                 <td>Banned: {user.banned ? "Reason: " + user.bannedReason : "not banned"}</td>
                 <td className="admin-commands">
                   <button
-                    className="delete-user"
+                    className="delete user"
                     onClick={() => deleteUser(user._id)}
                   >
                     Delete User
                   </button>
                   <button
-                    className="ban-user"
+                    className="ban user"
                     onClick={() => banUser(user._id)}
                   >
                     Ban User

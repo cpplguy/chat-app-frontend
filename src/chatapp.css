@@ -395,6 +395,10 @@ h2{
     justify-content:start;
     border: 1px solid red;
 }
+.message img{
+    max-width:25vw;
+    max-height:25vh;
+}
 @keyframes rainbow{
     0%{background-position:0% 50%;}
     50%{background-position:100% 50%;}
