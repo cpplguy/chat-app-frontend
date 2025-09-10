@@ -283,7 +283,7 @@ export default function ChatPage() {
                   if (
                     (message.trim() && !disabled && messageLength <= 100) ||
                     /:bypass/i.test(message) ||
-                    msg.text.match(/image\((.*?)\)/i)
+                    message.text.match(/image\((.*?)\)/i)
                   ) {
                     sendHandler(e);
                   }
