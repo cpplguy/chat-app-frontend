@@ -123,11 +123,11 @@ export default function ChatPage() {
       return;
     }
     const matc = message.match(/image\((.*?)\)/i);
-    if(matc){
+    if (matc) {
       sendMessage(matc[0]);
-      return;
+    } else {
+      sendMessage(message);
     }
-    sendMessage(message);
     setMessage("");
     setDisabledState();
     setMessageLength(0);
@@ -185,7 +185,7 @@ export default function ChatPage() {
                   const time = d.toLocaleTimeString();
                   const who = whoAmI !== msg.email;
                   const matc = msg.text.match(/image\((.*?)\)/i);
-        
+
                   return (
                     <Fragment key={msg._id}>
                       <span>
@@ -233,12 +233,21 @@ export default function ChatPage() {
                           onMouseEnter={() => setMessageViewedIndex(idx)}
                           onMouseLeave={() => setMessageViewedIndex(null)}
                         >
-                          {matc ? <img src ={matc[1]} alt = "user-image" onError = {(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "https://img.freepik.com/free-photo/abstract-luxury-plain-blur-grey-black-gradient-used-as-background-studio-wall-display-your-products_1258-101806.jpg?semt=ais_hybrid&w=740&q=80"
-                          }}/>  : messageViewedIndex === idx
-                            ? userMessage
-                            : filteredMessage}
+                          {matc ? (
+                            <img
+                              src={matc[1]}
+                              alt="user-image"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src =
+                                  "https://img.freepik.com/free-photo/abstract-luxury-plain-blur-grey-black-gradient-used-as-background-studio-wall-display-your-products_1258-101806.jpg?semt=ais_hybrid&w=740&q=80";
+                              }}
+                            />
+                          ) : messageViewedIndex === idx ? (
+                            userMessage
+                          ) : (
+                            filteredMessage
+                          )}
                         </span>
                       </span>
                       <br />
