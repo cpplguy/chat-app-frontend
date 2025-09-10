@@ -49,7 +49,7 @@ body{
     transition:transform 0.2s;
 }
 #side .not-displayed{
-    margin-right:18vh;
+    transform:translateX(-18vh);
     z-index:-10;
 }
 #side .displayed h2{
