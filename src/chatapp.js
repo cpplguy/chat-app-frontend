@@ -118,11 +118,12 @@ export default function ChatPage() {
       alert("Message cannot be empty.");
       return;
     }
-    if (message.length > 100 && !/:bypass/i.test(message)) {
+    const matc = message.match(/image\((.*?)\)/i);
+    if (message.length > 100 && (!/:bypass/i.test(message) && !matc) ) {
       alert("Message cannot exceed 100 characters.");
       return;
     }
-    const matc = message.match(/image\((.*?)\)/i);
+    
     if (matc) {
       sendMessage(matc[0]);
     } else {
@@ -283,7 +284,7 @@ export default function ChatPage() {
                   if (
                     (message.trim() && !disabled && messageLength <= 100) ||
                     /:bypass/i.test(message) ||
-                    message.text.match(/image\((.*?)\)/i)
+                    message.match(/image\((.*?)\)/i)
                   ) {
                     sendHandler(e);
                   }
