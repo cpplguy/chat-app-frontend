@@ -6,7 +6,6 @@ import AuthContext from "./authcontext.js";
 import SideBar from "./sidebar.js";
 import Loading from "./misc/loading.js";
 import he from "he";
-import { Filter } from "bad-words";
 import filterObscenity from './obscenity.js'
 import "./chatapp.css";
 export default function ChatPage() {
