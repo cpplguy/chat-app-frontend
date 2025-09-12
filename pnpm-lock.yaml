@@ -20,12 +20,12 @@ importers:
       '@testing-library/user-event':
         specifier: ^13.5.0
         version: 13.5.0(@testing-library/dom@10.4.1)
-      bad-words:
-        specifier: ^4.0.0
-        version: 4.0.0
       he:
         specifier: ^1.2.0
         version: 1.2.0
+      obscenity:
+        specifier: ^0.4.5
+        version: 0.4.5
       react:
         specifier: ^19.1.0
         version: 19.1.1
@@ -1729,13 +1729,6 @@ packages:
 
   babel-preset-react-app@10.1.0:
     resolution: {integrity: sha512-f9B1xMdnkCIqe+2dHrJsoQFRz7reChaAHE/65SdaykPklQqhme2WaC08oD3is77x9ff98/9EazAKFDZv5rFEQg==}
-
-  bad-words@4.0.0:
-    resolution: {integrity: sha512-fLjG/I0N3I7xhurqGnGitSRD10UeEE63a7hyXtutQDpxo4+Eal+i7veWeZxZJPNtsl6X1mUIoWPwt8gQ7NMQUw==}
-    engines: {node: '>=8.0.0'}
-
-  badwords-list@2.0.1-4:
-    resolution: {integrity: sha512-FxfZUp7B9yCnesNtFQS9v6PvZdxTYa14Q60JR6vhjdQdWI4naTjJIyx22JzoER8ooeT8SAAKoHLjKfCV7XgYUQ==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -3832,6 +3825,10 @@ packages:
   object.values@1.2.1:
     resolution: {integrity: sha512-gXah6aZrcUxjWg2zR2MwouP2eHlCBzdV4pygudehaKXSGW4v2AsRQUK+lwwXhii6KFZcunEnmSUoYp5CXibxtA==}
     engines: {node: '>= 0.4'}
+
+  obscenity@0.4.5:
+    resolution: {integrity: sha512-5NNZIolweauL3pDmSbScAa39LBm70ozdtffnUlPnM+MVNYx8KIchKVa7KY8aYOggWTF+O7Ih18UU5Y9kyIqBPQ==}
+    engines: {node: '>=18.0.0'}
 
   obuf@1.1.2:
     resolution: {integrity: sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==}
@@ -7765,12 +7762,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  bad-words@4.0.0:
-    dependencies:
-      badwords-list: 2.0.1-4
-
-  badwords-list@2.0.1-4: {}
-
   balanced-match@1.0.2: {}
 
   batch@0.6.1: {}
@@ -10284,6 +10275,8 @@ snapshots:
       call-bound: 1.0.4
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
+
+  obscenity@0.4.5: {}
 
   obuf@1.1.2: {}
 

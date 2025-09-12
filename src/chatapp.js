@@ -7,8 +7,8 @@ import SideBar from "./sidebar.js";
 import Loading from "./misc/loading.js";
 import he from "he";
 import { Filter } from "bad-words";
+import filterObscenity from './obscenity.js'
 import "./chatapp.css";
-const filter = new Filter();
 export default function ChatPage() {
   const { isAuth } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -177,10 +177,7 @@ export default function ChatPage() {
               ? "messages will appear here"
               : messages.map((msg, idx) => {
                   const userMessage = he.decode(msg.text);
-                  const filteredMessage =
-                    (filter.isProfane(userMessage) &&
-                      filter.clean(userMessage)) ||
-                    userMessage;
+                  const filteredMessage = filterObscenity(userMessage);
                   const d = new Date(msg.createdAt);
                   const date = d.toLocaleDateString();
                   const time = d.toLocaleTimeString();
