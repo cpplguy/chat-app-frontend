@@ -118,7 +118,7 @@ export default function AdminDashboard() {
                   >
                     Ban User
                   </button>
-                  <button claassName = "ipban user" onClick = {() => banUser(user._id, "/users/ipban", "POST")}>IP Ban User</button>
+                  <button claasName = "ipban user" onClick = {() => banUser(user._id, "/users/ipban", "POST")}>IP Ban User</button>
                 </td>
               </tr>
             );
