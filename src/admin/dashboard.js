@@ -57,13 +57,13 @@ export default function AdminDashboard() {
       alert(`An error occurred while deleting the user: ${err.message}`);
     }
   }
-  async function banUser(userId) {
+  async function banUser(userId, path, method) {
     const messagePrompt = prompt("Please enter a reason for banning the user:");
     if (!messagePrompt) {
       alert("Please enter a reason.");
       return;
     }
-    const banFetch = await fetch(backendPath + "/users/ban", {
+    const banFetch = await fetch(backendPath + path, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -114,10 +114,11 @@ export default function AdminDashboard() {
                   </button>
                   <button
                     className="ban user"
-                    onClick={() => banUser(user._id)}
+                    onClick={() => banUser(user._id, "/users/ban", "PATCH")}
                   >
                     Ban User
                   </button>
+                  <button claassName = "ipban user" onClick = {() => banUser(user._id, "/users/ipban", "POST")}>IP Ban User</button>
                 </td>
               </tr>
             );
