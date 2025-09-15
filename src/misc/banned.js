@@ -3,7 +3,7 @@ import AuthContext from "../authcontext.js";
 import { Navigate } from "react-router-dom";
 export default function BannedPage() {
   const { bannedToken, bannedMessage } = useContext(AuthContext);
-  if (!bannedToken || !bannedToken) {
+  if (!bannedToken) {
     return <Navigate to="/" replace />;
   }
   return (
