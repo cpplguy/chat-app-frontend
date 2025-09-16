@@ -1,14 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, useRef, useContext, Fragment } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+  Fragment,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import createSocket from "./socket.js";
 import AuthContext from "./authcontext.js";
 import SideBar from "./sidebar.js";
 import Loading from "./misc/loading.js";
 import he from "he";
-import filterObscenity from './obscenity.js'
+import filterObscenity from "./obscenity.js";
 import "./chatapp.css";
 export default function ChatPage() {
+  const CensorWordsMemo = React.memo(({ text }) => filterObscenity(text));
   const { isAuth } = useContext(AuthContext);
   const navigate = useNavigate();
   const { roomId = "main" } = useParams();
@@ -45,7 +52,7 @@ export default function ChatPage() {
     };
     const connectHandler = () => {
       const socket = socketRef.current;
-      console.log("connected to socket server");
+
       socket.emit("join room", roomId || "main");
       socket.emit("request users connected");
     };
@@ -86,6 +93,7 @@ export default function ChatPage() {
         socket.on("users online", handler3);
         socket.on("connect_error", errorHandler);
         socket.connect();
+        console.log("connected to socket server");
       } catch (err) {
         console.error("Error during init: ", err);
         navigate("/", { replace: true });
@@ -118,11 +126,11 @@ export default function ChatPage() {
       return;
     }
     const matc = message.match(/image\((.*?)\)/i);
-    if (message.length > 100 && (!/:bypass/i.test(message) && !matc) ) {
+    if (message.length > 100 && !/:bypass/i.test(message) && !matc) {
       alert("Message cannot exceed 100 characters.");
       return;
     }
-    
+
     if (matc) {
       sendMessage(matc[0]);
     } else {
@@ -138,7 +146,7 @@ export default function ChatPage() {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-  if (!peopleOnline) return <Loading />; // uses peopleOnline to determine whether page has loaded. Much better than a seperate usestate.
+  if (peopleOnline === 0) return <Loading />; // uses peopleOnline to determine whether page has loaded. Much better than a seperate usestate.
   return (
     <>
       <SideBar usernames={usernames} />
@@ -176,7 +184,6 @@ export default function ChatPage() {
               ? "messages will appear here"
               : messages.map((msg, idx) => {
                   const userMessage = he.decode(msg.text);
-                  const filteredMessage = filterObscenity(userMessage);
                   const d = new Date(msg.createdAt);
                   const date = d.toLocaleDateString();
                   const time = d.toLocaleTimeString();
@@ -243,7 +250,7 @@ export default function ChatPage() {
                           ) : messageViewedIndex === idx ? (
                             userMessage
                           ) : (
-                            filteredMessage
+                            <CensorWordsMemo text={userMessage} />
                           )}
                         </span>
                       </span>

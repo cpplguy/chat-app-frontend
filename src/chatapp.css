@@ -15,6 +15,7 @@ body{
     flex-direction:row-reverse;
     justify-content:center;
     z-index:999;
+    border: 1px solid red;
 }
 #side #button-container{
     display:flex;
@@ -49,8 +50,14 @@ body{
     transition:transform 0.2s;
 }
 #side .not-displayed{
-    transform:translateX(-18vh);
+    position:fixed;
+    /*transform:translateX(-18vh);*/
+    left:-18vh;
     z-index:-10;
+}
+aside.not-displayed{
+    z-index:-1000;
+    pointer-events:none;
 }
 #side .displayed h2{
     transform:rotate(180deg);
