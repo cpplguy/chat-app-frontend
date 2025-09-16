@@ -14,8 +14,8 @@ import Loading from "./misc/loading.js";
 import he from "he";
 import filterObscenity from "./obscenity.js";
 import "./chatapp.css";
-export default function ChatPage() {
   const CensorWordsMemo = React.memo(({ text }) => filterObscenity(text));
+export default function ChatPage() {
   const { isAuth } = useContext(AuthContext);
   const navigate = useNavigate();
   const { roomId = "main" } = useParams();
