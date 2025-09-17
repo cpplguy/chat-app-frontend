@@ -5,7 +5,7 @@ function RoomIdForm({ roomInput, setRoomInput, formOpened, setFormOpened }) {
   const navigate = useNavigate();
   function submitHandler(e) {
     e.preventDefault();
-    navigate("/chat/" + String(roomInput).trim(), { replace: true });
+    navigate("/chat/" + String(roomInput).trim().toLowerCase());
     setRoomInput("")
   }
   function onKeyDownHandler(e){

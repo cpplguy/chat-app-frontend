@@ -14,7 +14,7 @@ import Loading from "./misc/loading.js";
 import he from "he";
 import filterObscenity from "./obscenity.js";
 import "./chatapp.css";
-  const CensorWordsMemo = React.memo(({ text }) => filterObscenity(text));
+const CensorWordsMemo = React.memo(({ text }) => filterObscenity(text));
 export default function ChatPage() {
   const { isAuth } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ export default function ChatPage() {
     };
     const handler2 = (users) => {
       if (!isAuth.auth) {
-        navigate("/", { replace: true });
+        navigate("/");
         return;
       }
       setUsernames(users);
@@ -78,7 +78,7 @@ export default function ChatPage() {
     const init = () => {
       try {
         if (/[^a-z0-9]/.test(roomId)) {
-          navigate("/", { replace: true });
+          navigate("/");
         }
         if (/[A-Z]/.test(roomId)) {
           navigate("/chat/" + roomId.toLowerCase());
@@ -193,6 +193,8 @@ export default function ChatPage() {
                   return (
                     <Fragment key={msg._id}>
                       <span>
+                        onMouseEnter={() => setMessageViewedIndex(idx)}
+                        onMouseLeave={() => setMessageViewedIndex(null)}
                         <span className="username" title={msg.email}>
                           {who && (
                             <span
@@ -234,8 +236,6 @@ export default function ChatPage() {
                           className={`${
                             !who ? "user message" : "client message"
                           }`}
-                          onMouseEnter={() => setMessageViewedIndex(idx)}
-                          onMouseLeave={() => setMessageViewedIndex(null)}
                         >
                           {matc ? (
                             <img
