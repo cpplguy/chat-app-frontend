@@ -58,13 +58,13 @@ export default function AdminDashboard() {
     }
   }
   async function banUser(userId, path, method) {
-    const messagePrompt = prompt("Please enter a reason for banning the user:");
+    const messagePrompt = prompt("Please enter a reason for banning the user (add :unban to unban a user):");
     if (!messagePrompt) {
       alert("Please enter a reason.");
       return;
     }
     const banFetch = await fetch(backendPath + path, {
-      method: "PATCH",
+      method:method,
       headers: {
         "Content-Type": "application/json",
       },
