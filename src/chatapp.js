@@ -20,6 +20,7 @@ export default function ChatPage() {
   const navigate = useNavigate();
   const { roomId = "main" } = useParams();
   const bottomRef = useRef(null);
+  const topRef = useRef(null);
   const socketRef = useRef(null);
   //message states
   const [message, setMessage] = useState("");
@@ -171,6 +172,13 @@ export default function ChatPage() {
               className={`${peopleOnline > 1 ? "green" : "red"} circle`}
             ></span>
           </h2>
+          <button id = "copy-chat-data" onClick = {() => {
+            navigator.clipboard.writeText(`roomId: ${roomId}\n data-format: JSON \n\n` + messages.map((itm) => {
+              itm.text.match(/image\((.*?)\)/i) ? itm.text = "[Image]" : itm.text = he.decode(itm.text);
+              const {__v, _id, ...rest} = itm;
+              return JSON.stringify(rest, null, 2)
+            })).then(() => alert("Chat messages copied to clipboard")).catch((err) => console.error("failed to copy. Error: ", err));
+          }}>Copy Chat Messages</button>
         </header>
         {/*
         <div id="message-length-container-container">
@@ -179,6 +187,7 @@ export default function ChatPage() {
             </div>
           </div>*/}
         <div id="messages-container">
+          <div ref={topRef} id = "top"></div>
           <p>
             {messages?.length === 0
               ? "messages will appear here"

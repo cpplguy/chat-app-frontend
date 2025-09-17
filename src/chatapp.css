@@ -226,6 +226,20 @@ header{
     justify-content:end;
     text-align:center;
 }
+header button{
+    position:relative;
+    right:1vw;
+    top:7vh;
+    background-color:lightblue;
+    border-radius:10px;
+    border:0.5px solid black;
+    width:5.5vw;
+    height:fit-content;
+    font-size:2.5vh;
+    padding:0.25vh 0.5vw 0.25vh 0.5vw;
+    cursor:pointer;
+    left:0;
+}
 header * {
     justify-content:center;
 }

@@ -25,7 +25,6 @@ export default function AdminDashboard() {
         if (fetchData.ok) {
           const data = await fetchData.json();
           setUsers(data);
-          console.log(data);
         }
       } catch (err) {
         console.error("Error fetching users: ", err);
@@ -58,13 +57,15 @@ export default function AdminDashboard() {
     }
   }
   async function banUser(userId, path, method) {
-    const messagePrompt = prompt("Please enter a reason for banning the user (add :unban to unban a user):");
+    const messagePrompt = prompt(
+      "Please enter a reason for banning the user (add :unban to unban a user):"
+    );
     if (!messagePrompt) {
       alert("Please enter a reason.");
       return;
     }
     const banFetch = await fetch(backendPath + path, {
-      method:method,
+      method: method,
       headers: {
         "Content-Type": "application/json",
       },
@@ -117,12 +118,14 @@ export default function AdminDashboard() {
             {users.map((user) => {
               return (
                 <tr key={user._id}>
-                  <td>{user.email}</td>
-                  <td>
+                  <td className="table-name">{user.email}</td>
+                  <td className = "table-banned">
                     Banned:{" "}
-                    {user.banned
-                      ? "Reason: " + user.bannedReason
-                      : "not banned"}
+                    <span style={{ fontWeight: "bold" }}>
+                      {user.banned
+                        ? "Reason: " + user.bannedReason
+                        : "not banned"}
+                    </span>
                   </td>
                   <td className="admin-commands">
                     {user.email !== "admin@admin.com" && (
