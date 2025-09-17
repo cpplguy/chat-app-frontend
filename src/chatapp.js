@@ -192,9 +192,8 @@ export default function ChatPage() {
 
                   return (
                     <Fragment key={msg._id}>
-                      <span>
-                        onMouseEnter={() => setMessageViewedIndex(idx)}
-                        onMouseLeave={() => setMessageViewedIndex(null)}
+                      <span onMouseEnter={() => setMessageViewedIndex(idx)}
+                        onMouseLeave={() => setMessageViewedIndex(null)}>
                         <span className="username" title={msg.email}>
                           {who && (
                             <span
