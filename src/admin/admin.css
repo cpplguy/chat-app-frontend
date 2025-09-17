@@ -2,3 +2,6 @@ table .user{
     color:black;
     background-color:lightblue;
 }
+table button{
+    margin-right:0.5vw;
+}

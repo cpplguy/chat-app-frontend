@@ -192,8 +192,10 @@ export default function ChatPage() {
 
                   return (
                     <Fragment key={msg._id}>
-                      <span onMouseEnter={() => setMessageViewedIndex(idx)}
-                        onMouseLeave={() => setMessageViewedIndex(null)}>
+                      <span
+                        className="user-message-container"
+                        
+                      >
                         <span className="username" title={msg.email}>
                           {who && (
                             <span
@@ -235,7 +237,10 @@ export default function ChatPage() {
                           className={`${
                             !who ? "user message" : "client message"
                           }`}
+                          onMouseEnter={() => setMessageViewedIndex(idx)}
+                        onMouseLeave={() => setMessageViewedIndex(null)}
                         >
+                          
                           {matc ? (
                             <img
                               src={matc[1]}

@@ -45,7 +45,7 @@ export default function AdminDashboard() {
       });
       const jsonRes = await response.json();
       if (response.ok) {
-        setUsers( usrs => usrs.filter((user) => user._id !== userId));
+        setUsers((usrs) => usrs.filter((user) => user._id !== userId));
         console.log("User deleted successfully.");
         alert("user deleted");
       } else {
@@ -74,7 +74,14 @@ export default function AdminDashboard() {
     const jsonRes = await banFetch.json();
     if (banFetch.ok) {
       setUsers(
-        users.map((user) => user._id === userId && { ...user, banned: true, bannedMessage: messagePrompt })
+        users.map(
+          (user) =>
+            user._id === userId && {
+              ...user,
+              banned: true,
+              bannedMessage: messagePrompt,
+            }
+        )
       );
       console.log("User banned successfully.");
       alert("User banned successfully.");
@@ -88,43 +95,68 @@ export default function AdminDashboard() {
 
   return (
     <>
-    <div id = "dashboard">
-      <header id="admin-header">
-        <h1>Admin Dashboard</h1>
-      </header>
-      <table style = {{ display:"flex", flexDirection:"column",alignItems:"center", justifyContent:"center" }}>
-        <thead>
-          <tr>
-            <th>Email/Username</th>
-            <th>Banned Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => {
-            return (
-              <tr key={user._id}>
-                <td>{user.email}</td>
-                <td>Banned: {user.banned ? "Reason: " + user.bannedReason : "not banned"}</td>
-                <td className="admin-commands">
-                  <button
-                    className="delete user"
-                    onClick={() => deleteUser(user._id)}
-                  >
-                    Delete User
-                  </button>
-                  <button
-                    className="ban user"
-                    onClick={() => banUser(user._id, "/users/ban", "PATCH")}
-                  >
-                    Ban User
-                  </button>
-                  <button className = "ipban user" onClick = {() => banUser(user._id, "/users/ipban", "POST")}>IP Ban User</button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div id="dashboard">
+        <header id="admin-header">
+          <h1>Admin Dashboard</h1>
+        </header>
+        <table
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <thead>
+            <tr>
+              <th>Email/Username</th>
+              <th>Banned Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => {
+              return (
+                <tr key={user._id}>
+                  <td>{user.email}</td>
+                  <td>
+                    Banned:{" "}
+                    {user.banned
+                      ? "Reason: " + user.bannedReason
+                      : "not banned"}
+                  </td>
+                  <td className="admin-commands">
+                    {user.email !== "admin@admin.com" && (
+                      <>
+                        <button
+                          className="delete user"
+                          onClick={() => deleteUser(user._id)}
+                        >
+                          Delete User
+                        </button>
+                        <button
+                          className="ban user"
+                          onClick={() =>
+                            banUser(user._id, "/users/ban", "PATCH")
+                          }
+                        >
+                          Ban User
+                        </button>
+                        <button
+                          className="ipban user"
+                          onClick={() =>
+                            banUser(user._id, "/users/ipban", "POST")
+                          }
+                        >
+                          IP Ban User
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </>
   );
