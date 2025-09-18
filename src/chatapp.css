@@ -239,6 +239,7 @@ header button{
     padding:0.25vh 0.5vw 0.25vh 0.5vw;
     cursor:pointer;
     left:0;
+    color:black;
 }
 header * {
     justify-content:center;
