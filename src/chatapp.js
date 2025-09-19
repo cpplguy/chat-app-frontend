@@ -127,8 +127,8 @@ export default function ChatPage() {
       return;
     }
     const matc = message.match(/image\((.*?)\)/i);
-    if (message.length > 100 && !/:bypass/i.test(message) && !matc) {
-      alert("Message cannot exceed 100 characters.");
+    if (message.length > 100 && !(/:bypass/i.test(message) && message.length < 1000) && !matc) {
+      alert("Message cannot exceed character limit.");
       return;
     }
 
