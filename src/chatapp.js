@@ -196,7 +196,7 @@ export default function ChatPage() {
                   const d = new Date(msg.createdAt);
                   const date = d.toLocaleDateString();
                   const time = d.toLocaleTimeString();
-                  const who = whoAmI !== msg.email;
+                  const who = whoAmI !== msg.email.replace(/📱|💻/, "");
                   const matc = msg.text.match(/image\((.*?)\)/i);
 
                   return (
