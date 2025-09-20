@@ -10,6 +10,7 @@ const matcher = new RegExpMatcher({
 });
 const censor = new TextCensor();
 export default function filterObscenity(text) {
-  const m = matcher.getAllMatches(text);
-  return m?.length > 0 ? censor.applyTo(text.replaceAll(/[`.,'";:/?]/g, ""), m) : text;
+  const replaced = text.replaceAll(/[`.,'";:/?]/g,"")
+  const m = matcher.getAllMatches(replaced);
+  return m?.length > 0 ? censor.applyTo(replaced, m) : text;
 }
