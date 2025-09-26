@@ -60,6 +60,7 @@ export default function ChatPage() {
     const errorHandler = (err) => {
       console.error("error has happened while connecting. Error : ", err);
       socketCleanUp();
+      navigate("/", { replace: true });
     };
     const socketCleanUp = () => {
       if (socketRef.current) {
@@ -96,8 +97,7 @@ export default function ChatPage() {
         socket.connect();
         console.log("connected to socket server");
       } catch (err) {
-        console.error("Error during init: ", err);
-        navigate("/", { replace: true });
+        errorHandler(err);
       }
     };
     init();
@@ -127,7 +127,11 @@ export default function ChatPage() {
       return;
     }
     const matc = message.match(/image\((.*?)\)/i);
-    if (message.length > 100 && !(/:bypass/i.test(message) && message.length < 1000) && !matc) {
+    if (
+      message.length > 100 &&
+      !(/:bypass/i.test(message) && message.length < 1000) &&
+      !matc
+    ) {
       alert("Message cannot exceed character limit.");
       return;
     }
@@ -146,6 +150,18 @@ export default function ChatPage() {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
+  }, [messages]);
+  useEffect(() => {
+    const observer = new IntersectionObserver((item) => {
+      if (item[0].isIntersecting && messages.length > 0) {
+        console.log("viewed");
+        observer.disconnect();
+      }
+    });
+    if (topRef.current) {
+      observer.observe(topRef.current);
+    }
+    return () => observer.disconnect();
   }, [messages]);
   if (peopleOnline === 0) return <Loading />; // uses peopleOnline to determine whether page has loaded. Much better than a seperate usestate.
   return (
@@ -172,13 +188,26 @@ export default function ChatPage() {
               className={`${peopleOnline > 1 ? "green" : "red"} circle`}
             ></span>
           </h2>
-          <button id = "copy-chat-data" onClick = {() => {
-            navigator.clipboard.writeText(`roomId: ${roomId}\n data-format: JSON \n\n` + messages.map((itm) => {
-              itm.text.match(/image\((.*?)\)/i) ? itm.text = "[Image]" : itm.text = he.decode(itm.text);
-              const {__v, _id, ...rest} = itm;
-              return JSON.stringify(rest, null, 2)
-            })).then(() => alert("Chat messages copied to clipboard")).catch((err) => console.error("failed to copy. Error: ", err));
-          }}>Copy Chat Messages</button>
+          <button
+            id="copy-chat-data"
+            onClick={() => {
+              navigator.clipboard
+                .writeText(
+                  `roomId: ${roomId}\n data-format: JSON \n\n` +
+                    messages.map((itm) => {
+                      itm.text.match(/image\((.*?)\)/i)
+                        ? (itm.text = "[Image]")
+                        : (itm.text = he.decode(itm.text));
+                      const { __v, _id, ...rest } = itm;
+                      return JSON.stringify(rest, null, 2);
+                    })
+                )
+                .then(() => alert("Chat messages copied to clipboard"))
+                .catch((err) => console.error("failed to copy. Error: ", err));
+            }}
+          >
+            Copy Chat Messages
+          </button>
         </header>
         {/*
         <div id="message-length-container-container">
@@ -187,26 +216,26 @@ export default function ChatPage() {
             </div>
           </div>*/}
         <div id="messages-container">
-          <div ref={topRef} id = "top"></div>
+          
           <p>
-            {messages?.length === 0
+            <span ref={topRef} id="top" style = {{ border: "1px solid white"}}></span>
+            
+            {
+            messages?.length === 0
               ? "messages will appear here"
               : messages.map((msg, idx) => {
                   const userMessage = he.decode(msg.text);
                   const d = new Date(msg.createdAt);
                   const date = d.toLocaleDateString();
                   const time = d.toLocaleTimeString();
-                  const replaced =  msg.email.replace(/📱|💻/g, "").trim();
+                  const replaced = msg.email.replace(/📱|💻/g, "").trim();
                   const who = whoAmI !== replaced;
-                  
+
                   const matc = msg.text.match(/image\((.*?)\)/i);
 
                   return (
                     <Fragment key={msg._id}>
-                      <span
-                        className="user-message-container"
-                        
-                      >
+                      <span className="user-message-container">
                         <span className="username" title={msg.email}>
                           {who && (
                             <span
@@ -249,9 +278,8 @@ export default function ChatPage() {
                             !who ? "user message" : "client message"
                           }`}
                           onMouseEnter={() => setMessageViewedIndex(idx)}
-                        onMouseLeave={() => setMessageViewedIndex(null)}
+                          onMouseLeave={() => setMessageViewedIndex(null)}
                         >
-                          
                           {matc ? (
                             <img
                               src={matc[1]}
@@ -271,6 +299,7 @@ export default function ChatPage() {
                       </span>
                       <br />
                     </Fragment>
+                    
                   );
                 })}
           </p>
