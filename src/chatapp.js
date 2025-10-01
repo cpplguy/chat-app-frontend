@@ -162,7 +162,7 @@ export default function ChatPage() {
       observer.observe(topRef.current);
     }
     return () => observer.disconnect();
-  }, [messages]);
+  }, []);
   if (peopleOnline === 0) return <Loading />; // uses peopleOnline to determine whether page has loaded. Much better than a seperate usestate.
   return (
     <>
@@ -218,7 +218,7 @@ export default function ChatPage() {
         <div id="messages-container">
           
           <p>
-            <span ref={topRef} id="top" style = {{ border: "1px solid white"}}></span>
+            <span ref={topRef} id="top" style = {{ border: "1px solid white", zIndex:"10000"}}></span>
             
             {
             messages?.length === 0
