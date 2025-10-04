@@ -418,6 +418,23 @@ h2{
     max-width:25vw;
     max-height:25vh;
 }
+.delete-message{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:15px;
+    height:15px;
+    border: 0.25px solid black;
+    border-radius:50%;
+    background-color:red;
+    color:white;
+    font-weight:700;
+}
+.delete-message.client{
+    left:1vw;
+    bottom:-0.5vh;
+}
 @keyframes rainbow{
     0%{background-position:0% 50%;}
     50%{background-position:100% 50%;}

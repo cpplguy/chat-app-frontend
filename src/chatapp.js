@@ -157,6 +157,11 @@ export default function ChatPage() {
     setDisabledState();
     setMessageLength(0);
   }
+  function deleteMessage(id) {
+    if (socketRef.current) {
+      socketRef.current.emit("delete message", id);
+    }
+  }
 
   useEffect(() => {
     if (bottomRef.current) {
@@ -249,6 +254,7 @@ export default function ChatPage() {
 
                   return (
                     <Fragment key={msg._id}>
+                      
                       <span className="user-message-container">
                         <span className="username" title={msg.email}>
                           {who && (
@@ -286,7 +292,12 @@ export default function ChatPage() {
                           {who &&
                             time.slice(0, +time.slice(0, 2) ? 5 : 4) +
                               time.slice(-2).replace(":", "")}
+                              <button className = {`delete-message ${!who ? "user" : "client"}`}
+                              style = {{display: `${(who) && (whoAmI !== "admin@admin.com") ? "none" : "flex"}`}}
+                      onClick = {() => deleteMessage(msg._id)}
+                      >X</button>
                         </span>
+                        
                         <span
                           className={`${
                             !who ? "user message" : "client message"
