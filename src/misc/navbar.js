@@ -1,8 +1,9 @@
 import { useContext } from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useLocation} from "react-router-dom";
 import AuthContext from "../authcontext";
 export default function NavBar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const backendPath = `${
     !(process.env.REACT_APP_STATUS === "development")
       ? "/api/users/logout"
@@ -23,7 +24,7 @@ export default function NavBar() {
       alert("error occured, error: ", err);
     }
   }
-  if (isAuth.auth) {
+  if (isAuth.auth && location.pathname !== "/bannedPage" ) {
     return (
       <nav>
         <button id="logout" onClick={deleteCookies}>

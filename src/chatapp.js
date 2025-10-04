@@ -16,7 +16,7 @@ import filterObscenity from "./obscenity.js";
 import "./chatapp.css";
 const CensorWordsMemo = React.memo(({ text }) => filterObscenity(text));
 export default function ChatPage() {
-  const { isAuth } = useContext(AuthContext);
+  const { isAuth, setBannedToken, setBannedMessage } = useContext(AuthContext);
   const navigate = useNavigate();
   const { roomId = "main" } = useParams();
   const bottomRef = useRef(null);
@@ -62,6 +62,15 @@ export default function ChatPage() {
       socketCleanUp();
       navigate("/", { replace: true });
     };
+    const banHandler = (bannedStatus) => {
+      if (bannedStatus.banned) {
+        console.log("User has banned account.");
+        setBannedMessage(bannedStatus.reason || "No reason given");
+        setBannedToken(true);
+        socketCleanUp();
+        navigate("/bannedPage", { replace: true });
+      }
+    };
     const socketCleanUp = () => {
       if (socketRef.current) {
         const socket = socketRef.current;
@@ -71,6 +80,8 @@ export default function ChatPage() {
         socket.off("users connected", handler2);
 
         socket.off("users online", handler3);
+
+        socket.off("is banned", banHandler);
 
         socket.off("connect_error", errorHandler);
 
@@ -93,6 +104,7 @@ export default function ChatPage() {
         socket.on("users connected", handler2);
         socket.on("chat message", handler);
         socket.on("users online", handler3);
+        socket.on("is banned", banHandler);
         socket.on("connect_error", errorHandler);
         socket.connect();
         console.log("connected to socket server");
@@ -216,12 +228,14 @@ export default function ChatPage() {
             </div>
           </div>*/}
         <div id="messages-container">
-          
           <p>
-            <span ref={topRef} id="top" style = {{ border: "1px solid white", zIndex:"10000"}}></span>
-            
-            {
-            messages?.length === 0
+            <span
+              ref={topRef}
+              id="top"
+              style={{ border: "1px solid white", zIndex: "10000" }}
+            ></span>
+
+            {messages?.length === 0
               ? "messages will appear here"
               : messages.map((msg, idx) => {
                   const userMessage = he.decode(msg.text);
@@ -299,7 +313,6 @@ export default function ChatPage() {
                       </span>
                       <br />
                     </Fragment>
-                    
                   );
                 })}
           </p>

@@ -10,10 +10,16 @@ const matcher = new RegExpMatcher({
 });
 const censor = new TextCensor();
 export default function filterObscenity(text) {
-  const replaced = text.replaceAll(
-    /[ᐟ˙-•+<>()& [ \] { }`.,'";:/?\u200B-\u200D\uFEFF\u00A0\u2000-\u200F\u202A-\u202E\u2066-\u2069\u0020 ]/g,
-    ""
-  );
+  
+  let replaced = text
+    .replace(/[˙•+\-<>()&[\]{}`.,'";:/?0-9@#$%^ ]/g, "")
+    // eslint-disable-next-line
+    .replace(/[^\u0000-\u007F]/g, "");
+  const replacedExclaim = replaced.replace(/[!1]/g, "i");
+  replaced = matcher.hasMatch(replacedExclaim)
+    ? replacedExclaim
+    : replaced.replace(/[!1]/g, "");
+
   const m = matcher.getAllMatches(replaced);
   return m?.length > 0 ? censor.applyTo(replaced, m) : text;
 }

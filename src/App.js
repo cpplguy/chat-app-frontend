@@ -84,7 +84,7 @@ function App() {
   if (loading) return <Loading />;
   return (
     <AuthContext.Provider
-      value={{ isAuth, setIsAuth, bannedToken, bannedMessage }}
+      value={{ isAuth, setIsAuth, bannedToken, bannedMessage, setBannedToken, setBannedMessage }}
     >
       <NavBar />
       <Routes>
