@@ -69,6 +69,10 @@ export default function ChatPage() {
         setBannedToken(true);
         socketCleanUp();
         navigate("/bannedPage", { replace: true });
+      }else if(bannedStatus.error) {
+        console.log(bannedStatus.error);
+        socketCleanUp();
+        navigate("/", { replace: true });
       }
     };
     const socketCleanUp = () => {
