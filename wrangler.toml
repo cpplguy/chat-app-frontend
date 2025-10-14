@@ -6,5 +6,5 @@ bucket = "./build"
 
 [[redirects]]
 from = "/api/*"
-to = "https://your-backend.example.com/:splat"
+to = "https://chat-app-backend-yx1q.onrender.com/:splat"
 status = 200
