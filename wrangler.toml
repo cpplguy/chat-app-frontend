@@ -1,0 +1,10 @@
+name = "thechatapper"
+compatibility_date = "2025-10-14"
+
+[site]
+bucket = "./build"
+
+[[redirects]]
+from = "/api/*"
+to = "https://your-backend.example.com/:splat"
+status = 200
