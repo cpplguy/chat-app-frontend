@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./admin.css";
 export default function AdminDashboard() {
-  const backendPath = `${
+  const backendPath = `${/*
     !(process.env.REACT_APP_STATUS === "development")
       ? "/api/admin"
-      : process.env.REACT_APP_SERVER + "/api/admin"
+      : */ process.env.REACT_APP_SERVER + "/api/admin"
   }`;
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);

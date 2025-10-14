@@ -2,10 +2,10 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./authcontext.js";
 export default function LoginPage() {
-  const backendPath = `${
+  const backendPath = `${/*
           !(process.env.REACT_APP_STATUS === "development")
             ? "/api/users/login"
-            : process.env.REACT_APP_SERVER + "/api/users/login"
+            :*/ process.env.REACT_APP_SERVER + "/api/users/login"
         }`
   const {setIsAuth} = useContext(AuthContext);
   const navigate = useNavigate();

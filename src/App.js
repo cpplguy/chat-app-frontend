@@ -16,10 +16,10 @@ import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 function App() {
   const location = useLocation();
-  const backendPath = `${
+  const backendPath = `${/*
     !(process.env.REACT_APP_STATUS === "development")
       ? "/api/auth"
-      : process.env.REACT_APP_SERVER + "/api/auth"
+      :*/ process.env.REACT_APP_SERVER + "/api/auth"
   }`;
   const navigate = useNavigate();
   const [isAuth, setIsAuth] = useState({

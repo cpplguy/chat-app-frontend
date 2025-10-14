@@ -4,10 +4,10 @@ import AuthContext from "../authcontext";
 export default function NavBar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const backendPath = `${
+  const backendPath = `${/*
     !(process.env.REACT_APP_STATUS === "development")
       ? "/api/users/logout"
-      : process.env.REACT_APP_SERVER + "/api/users/logout"
+      : */process.env.REACT_APP_SERVER + "/api/users/logout"
   }`;
   const { isAuth } = useContext(AuthContext);
   async function deleteCookies() {

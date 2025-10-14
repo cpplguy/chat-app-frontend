@@ -9,10 +9,10 @@ export default function RestrictedPage({ children }) {
   useEffect(() => {
       const adminFetch = async () => {
     const fetchAdmin = await fetch(
-      `${
+      `${/*
         !(process.env.REACT_APP_STATUS === "development")
           ? "/api/admin"
-          : process.env.REACT_APP_SERVER + "/api/admin"
+          : */process.env.REACT_APP_SERVER + "/api/admin"
       }`,
       {
         method: "GET",
