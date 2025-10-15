@@ -48,6 +48,7 @@ function App() {
             token: fetchAuthData.token,
           });
           setBannedToken(false);
+          console.log("user authenticated");
         } else if (fetchAuth.status === 403) {
           console.log("User is banned.");
           setIsAuth((prev) => ({ ...prev, auth: false }));
