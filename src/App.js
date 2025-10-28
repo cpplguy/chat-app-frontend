@@ -12,6 +12,7 @@ import BannedPage from "./misc/banned.js";
 import Dashboard from "./admin/dashboard.js";
 import NavBar from "./misc/navbar.js";
 import About from "./misc/about.js";
+import {deleteCookies} from "./misc/deletecookies.js";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 function App() {
@@ -30,6 +31,12 @@ function App() {
   const [bannedMessage, setBannedMessage] = useState("No reason given");
   const [bannedToken, setBannedToken] = useState(false);
   const [loading, setLoading] = useState(true);
+  useEffect(() =>{
+    if(!localStorage.getItem("loggedOut")){
+      localStorage.setItem("loggedOut", "true");
+      deleteCookies();
+    }
+  },[])
   useEffect(() => {
     (async () => {
       try {
