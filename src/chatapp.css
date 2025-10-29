@@ -430,9 +430,10 @@ h2{
     background-color:red;
     color:white;
     font-weight:700;
+    right:0.25vw;
 }
 .delete-message.client{
-    left:1vw;
+    right:1vw;
     bottom:-0.5vh;
 }
 @keyframes rainbow{

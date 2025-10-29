@@ -65,17 +65,15 @@ const fontMap = {
 
 const censor = new TextCensor();
 export default function filterObscenity(text) {
-  
-  let replaced = text;
-  replaced.replace(/./g, (c) => fontMap[c] || c);
-  replaced = replaced
-    .replace(/[˙•+\-<>()&[\]{}`.,'";:/?0-9@#$%^ ]/g, "")
-    // eslint-disable-next-line
-    .replace(/[^\u0000-\u007F]/g, "");
+  let replaced = text.replace(/./gu, (c) => fontMap[c] || c);
   const replacedExclaim = replaced.replace(/[!1]/g, "i");
   replaced = matcher.hasMatch(replacedExclaim)
     ? replacedExclaim
     : replaced.replace(/[!1]/g, "");
+  replaced = replaced.replace(/[˙•+\-<>()&[\]{}`.,'";:/?0-9@#$%^ ]/g, "");
+  // eslint-disable-next-line
+  /*.replace(/[^\u0000-\u007F]/g, "");*/
+  
 
   const m = matcher.getAllMatches(replaced);
   return m?.length > 0 ? censor.applyTo(replaced, m) : text;
