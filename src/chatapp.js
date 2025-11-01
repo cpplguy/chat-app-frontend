@@ -145,7 +145,7 @@ export default function ChatPage() {
     const matc = message.match(/image\((.*?)\)/i);
     if (
       message.length > 100 &&
-      !(/:bypass/i.test(message) && message.length < 1000) &&
+      !(/:bypass/i.test(message) && message.length < 5000) &&
       !matc
     ) {
       alert("Message cannot exceed character limit.");
@@ -253,8 +253,9 @@ export default function ChatPage() {
                   const time = d.toLocaleTimeString();
                   const replaced = msg.email.replace(/📱|💻/g, "").trim();
                   const who = whoAmI !== replaced;
-
                   const matc = msg.text.match(/image\((.*?)\)/i);
+                  const isLink = msg.text.match(/link\((.*?)\)/i)
+                  const censoredMemo = <CensorWordsMemo text={userMessage} />
 
                   return (
                     <Fragment key={msg._id}>
@@ -322,7 +323,13 @@ export default function ChatPage() {
                           ) : messageViewedIndex === idx ? (
                             userMessage
                           ) : (
-                            <CensorWordsMemo text={userMessage} />
+                            isLink ? (
+                            <a href = {censoredMemo} target="_blank" rel="noreferrer">
+                              {censoredMemo}
+                            </a>
+                            ) : (
+                            {censoredMemo}
+                            )
                           )}
                         </span>
                       </span>
