@@ -328,7 +328,7 @@ export default function ChatPage() {
                               {censoredMemo}
                             </a>
                             ) : (
-                            {censoredMemo}
+                            censoredMemo
                             )
                           )}
                         </span>
