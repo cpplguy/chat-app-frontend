@@ -255,9 +255,9 @@ export default function ChatPage() {
                   const who = whoAmI !== replaced;
                   const matc = msg.text.match(/image\((.*?)\)/i);
                   const isLink = msg.text.match(/link\((.*?)\)/i)
-                  const linkText = isLink && isLink[0]
+                  const linkText = isLink && isLink[1]
                   const censoredMemo = <CensorWordsMemo text={linkText || userMessage} />
-                  const anchor = <a href = {censoredMemo} target="_blank" rel="noreferrer">
+                  const anchor = <a href = {linkText} target="_blank" rel="noreferrer">
                               {censoredMemo}
                             </a>
 
