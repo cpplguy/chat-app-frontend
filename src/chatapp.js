@@ -255,7 +255,10 @@ export default function ChatPage() {
                   const who = whoAmI !== replaced;
                   const matc = msg.text.match(/image\((.*?)\)/i);
                   const isLink = msg.text.match(/link\((.*?)\)/i)
-                  const censoredMemo = <CensorWordsMemo text={userMessage} />
+                  const censoredMemo = <CensorWordsMemo text={isLink[0] || userMessage} />
+                  const anchor = <a href = {censoredMemo} target="_blank" rel="noreferrer">
+                              {censoredMemo}
+                            </a>
 
                   return (
                     <Fragment key={msg._id}>
@@ -321,12 +324,10 @@ export default function ChatPage() {
                               }}
                             />
                           ) : messageViewedIndex === idx ? (
-                            userMessage
+                            anchor || userMessage
                           ) : (
                             isLink ? (
-                            <a href = {censoredMemo} target="_blank" rel="noreferrer">
-                              {censoredMemo}
-                            </a>
+                            anchor
                             ) : (
                             censoredMemo
                             )
