@@ -1,9 +1,9 @@
 import "./App.css";
 import SignUpPage from "./signuppage.js";
 import LoginPage from "./loginpage.js";
-import ProtectedPage from "./protected.js";
-import RestrictedPage from "./restricted.js";
-import PublicPage from "./public.js";
+import ProtectedPage from "./componentwrappers/protected.js";
+import RestrictedPage from "./componentwrappers/restricted.js";
+import PublicPage from "./componentwrappers/public.js";
 import NotFound from "./misc/notfound.js";
 import ChatPage from "./chatapp.js";
 import AuthContext from "./authcontext.js";
@@ -12,6 +12,7 @@ import BannedPage from "./misc/banned.js";
 import Dashboard from "./admin/dashboard.js";
 import NavBar from "./misc/navbar.js";
 import About from "./misc/about.js";
+import Settings from "./settings.js";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 function App() {
@@ -142,6 +143,7 @@ function App() {
         <Route path="/reload" element={<Loading />} />
         <Route path="/bannedPage" element={<BannedPage />} />
         <Route path="/about" element={<About />} />
+        <Route path = "/settings" element = {<Settings/>}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AuthContext.Provider>

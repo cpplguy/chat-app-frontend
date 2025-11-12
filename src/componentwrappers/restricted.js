@@ -1,6 +1,6 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Loading from "./misc/loading.js";
+import Loading from "../misc/loading.js";
 export default function RestrictedPage({ children }) {
   const navigate = useNavigate();
   const [admin, setAdmin] = useState(false);

@@ -12,20 +12,29 @@ nav{
   display:flex;
   position:fixed;
   align-items:end;
+  flex-direction:row;
   justify-content:end;
-  left:calc(100vw - 70px);
+  width:100%;
 }
+nav div{
+  display:flex;
+  flex-direction:row;
+  gap:1rem;
+  margin-right:1rem;
+  
+}
+
 nav button{
   display:flex;
   width: 70px;
-  height:7.5vh;
+  height:4em;
   background: linear-gradient(135deg, #06b6d4, #3b82f6);
   color: black;
   justify-content:center;
   align-items:center;
 }
 nav button h3{
-font-size: 3vh;
+font-size: 1.25em;
 font-weight:400;
 }
 #not-found-container {
@@ -72,7 +81,7 @@ font-weight:400;
   color: white;
   cursor: pointer;
 }
-/*stuff for loading page.*/
+/*stuff for loading page*/
 #loading-container{
   display:flex;
   justify-content:center;
@@ -101,9 +110,50 @@ font-weight:400;
   color: gray;
   font-weight:lighter
 }
+/*settings*/
+#settings-container{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+#settings-container h1{
+  font-family: "Quicksand", san-serif;
+  font-size:4.5vh;
+  margin-top:2vh;
+  margin-bottom:4vh;
+}
+#settings-container ul{
+  display:flex;
+  flex-direction:column;
+  list-style-type:none;
+  padding:0;
+  align-items:center;
+}
+#settings-container li{
+  font-weight:bold;
+  margin-top:5vh;
+  font-size:3vh;
+}
+/*media*/
 @keyframes spin{
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+@media(min-height:750px){
+  nav button{
+    height:5em;
+  }
+  nav button h3{
+    font-size: 1.5em;
+}
+}
+@media(max-height:589px){
+  nav button{
+    height:3em;
+  }
+  nav button h3{
+    font-size: 1em;
+}
 }
 @media(max-width:600px){
   #loading-circle{
@@ -111,5 +161,12 @@ font-weight:400;
   }
   #loading-container h1{
     font-size:5vw;
+  }
+  nav button{
+    width: 50px;
+    height:3em;
+  }
+  nav button h3{
+    font-size: 1em;
   }
 }

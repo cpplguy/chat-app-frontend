@@ -11,10 +11,16 @@ export default function NavBar() {
   if (isAuth.auth && location.pathname !== "/bannedPage" ) {
     return (
       <nav>
+        <div id = "nav-container">
+        <button id = "settings" onClick = {() => navigate("/settings")}>
+          <h3>Settings</h3>
+        </button>
         <button id="logout" onClick={deleteCookies}>
           <h3>Log Out</h3>
         </button>
-        <button onClick = {() => navigate("/about")}>About</button>
+        
+        {/*<button onClick = {() => navigate("/about")}>About</button>*/}
+        </div>
           
       </nav>
     );

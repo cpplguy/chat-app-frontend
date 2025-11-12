@@ -7,7 +7,7 @@ import React, {
   Fragment,
 } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import createSocket from "./socket.js";
+import createSocket from "./misc/socket.js";
 import AuthContext from "./authcontext.js";
 import SideBar from "./sidebar.js";
 import Loading from "./misc/loading.js";
@@ -214,7 +214,7 @@ export default function ChatPage() {
             onClick={() => {
               navigator.clipboard
                 .writeText(
-                  `roomId: ${roomId}\n data-format: JSON \n\n` +
+                  `{roomId: ${roomId},\n data-format: JSON} \n\n` +
                     messages.map((itm) => {
                       itm.text.match(/image\((.*?)\)/i)
                         ? (itm.text = "[Image]")
@@ -255,7 +255,8 @@ export default function ChatPage() {
                   const who = whoAmI !== replaced;
                   const matc = msg.text.match(/image\((.*?)\)/i);
                   const isLink = msg.text.match(/link\((.*?)\)/i)
-                  const linkText = isLink && isLink[1]
+                  
+                  const linkText = isLink && isLink[1].includes("https") ? isLink[1] : isLink && `https://${isLink[1]}`
                   const censoredMemo = <CensorWordsMemo text={linkText || userMessage} />
                   const anchor = <a href = {linkText} target="_blank" rel="noreferrer">
                               {censoredMemo}
@@ -325,7 +326,7 @@ export default function ChatPage() {
                               }}
                             />
                           ) : messageViewedIndex === idx ? (
-                            anchor || userMessage
+                            (isLink && anchor) || userMessage
                           ) : (
                             isLink ? (
                             anchor
