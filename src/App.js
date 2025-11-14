@@ -15,6 +15,7 @@ import About from "./misc/about.js";
 import Settings from "./settings.js";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { deleteCookies } from "./misc/deletecookies.js";
 function App() {
   const location = useLocation();
   const backendPath = `${/*
@@ -31,6 +32,13 @@ function App() {
   const [bannedMessage, setBannedMessage] = useState("No reason given");
   const [bannedToken, setBannedToken] = useState(false);
   const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if(!localStorage.getItem("loggedOut")){
+      localStorage.setItem("loggedOut","true")
+      deleteCookies();
+      navigate("/login",{replace:true} );
+    }
+  },[])
   useEffect(() => {
     (async () => {
       try {
