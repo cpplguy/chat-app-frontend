@@ -2,12 +2,13 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./authcontext.js";
 export default function LoginPage() {
-  const backendPath = `${/*
+  const backendPath = `${
+    /*
           !(process.env.REACT_APP_STATUS === "development")
             ? "/api/users/login"
             :*/ process.env.REACT_APP_SERVER + "/api/users/login"
-        }`
-  const {setIsAuth} = useContext(AuthContext);
+  }`;
+  const { setIsAuth } = useContext(AuthContext);
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
@@ -17,21 +18,20 @@ export default function LoginPage() {
     }
   }
   async function login(obj) {
-    if(!name || !pass){
+    if (!name || !pass) {
       alert("Please fill in all fields");
       return;
     }
-    const fetc = await fetch(
-      backendPath,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(obj),
-      }
-    );
+    const fetc = await fetch(backendPath, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(obj),
+    });
+    const data = await fetc.json();
+    const json = JSON.stringify(data);
     switch (fetc.status) {
       case 404:
         alert("User not found.");
@@ -42,35 +42,33 @@ export default function LoginPage() {
         console.log("incorrect pass");
         return;
       case 429:
-        const error = await fetc.json();
-        alert(error.error);
+        alert("too many requests, please wait a few minutes.");
 
         return;
       case 200:
-        const data = await fetc.json();
-        setIsAuth({auth: true, user: data.user, token: data.token});
+        setIsAuth({ auth: true, user: data.user, token: data.token });
         console.log("Successful: User logged in.");
 
         return;
       default:
-        alert(`Server code: ${fetc.status}. Error message: ${fetc.statusText}`);
+        alert(`Server code: ${fetc.status}. Error message: ${json}`);
     }
   }
   async function handleSubmit(e) {
     e.preventDefault();
-      await login({ name: name, password: pass });
+    await login({ name: name, password: pass });
   }
   return (
     <>
-      <section className="page" id = "login">
+      <section className="page" id="login">
         <div className="logo">
           <h1>
             Chat <span className="green">App</span>
           </h1>
         </div>
 
-        <form className = "form"onSubmit={handleSubmit}>
-          <h1 className = "main-text">Login</h1>
+        <form className="form" onSubmit={handleSubmit}>
+          <h1 className="main-text">Login</h1>
           <label>
             Name:
             <input
@@ -112,9 +110,13 @@ export default function LoginPage() {
           </label>
           <br />
           <button type="submit">Login</button>
-          <button className="navigate" type = "button" onClick={() => navigate("/signup")}>
-          Don't have an account? Sign up here
-        </button>
+          <button
+            className="navigate"
+            type="button"
+            onClick={() => navigate("/signup")}
+          >
+            Don't have an account? Sign up here
+          </button>
         </form>
       </section>
     </>

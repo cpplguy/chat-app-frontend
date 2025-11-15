@@ -15,6 +15,17 @@ import he from "he";
 import filterObscenity from "./obscenity.js";
 import "./chatapp.css";
 const CensorWordsMemo = React.memo(({ text }) => filterObscenity(text));
+const ImageMemo = React.memo(({ img }) => (
+  <img
+    src={img}
+    alt="user-image"
+    onError={(e) => {
+      e.target.onerror = null;
+      e.target.src =
+        "https://img.freepik.com/free-photo/abstract-luxury-plain-blur-grey-black-gradient-used-as-background-studio-wall-display-your-products_1258-101806.jpg?semt=ais_hybrid&w=740&q=80";
+    }}
+  />
+));
 export default function ChatPage() {
   const { isAuth, setBannedToken, setBannedMessage } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -69,7 +80,7 @@ export default function ChatPage() {
         setBannedToken(true);
         socketCleanUp();
         navigate("/bannedPage", { replace: true });
-      }else if(bannedStatus.error) {
+      } else if (bannedStatus.error) {
         console.log(bannedStatus.error);
         socketCleanUp();
         navigate("/", { replace: true });
@@ -254,17 +265,24 @@ export default function ChatPage() {
                   const replaced = msg.email.replace(/📱|💻/g, "").trim();
                   const who = whoAmI !== replaced;
                   const matc = msg.text.match(/image\((.*?)\)/i);
-                  const isLink = msg.text.match(/link\((.*?)\)/i)
-                  
-                  const linkText = isLink && isLink[1].includes("https") ? isLink[1] : isLink && `https://${isLink[1]}`
-                  const censoredMemo = <CensorWordsMemo text={linkText || userMessage} />
-                  const anchor = <a href = {linkText} target="_blank" rel="noreferrer">
-                              {censoredMemo}
-                            </a>
+                  const isLink = msg.text.match(/link\((.*?)\)/i);
+                  const hasImage = !!(msg?.image && msg?.image!== "none");
+                  console.log("has image ", hasImage);
+                  const linkText =
+                    isLink && isLink[1].includes("https")
+                      ? isLink[1]
+                      : isLink && `https://${isLink[1]}`;
+                  const censoredMemo = (
+                    <CensorWordsMemo text={linkText || userMessage} />
+                  );
+                  const anchor = (
+                    <a href={linkText} target="_blank" rel="noreferrer">
+                      {censoredMemo}
+                    </a>
+                  );
 
                   return (
                     <Fragment key={msg._id}>
-                      
                       <span className="user-message-container">
                         <span className="username" title={msg.email}>
                           {who && (
@@ -285,7 +303,7 @@ export default function ChatPage() {
                                     }
                               }
                             >
-                              <img src="/icons8-account-48.png" alt="pfp" />
+                              <ImageMemo img = {hasImage ? msg.image : "/icons8-account-48.png"}/>
                             </span>
                           )}
                           {who
@@ -302,12 +320,23 @@ export default function ChatPage() {
                           {who &&
                             time.slice(0, +time.slice(0, 2) ? 5 : 4) +
                               time.slice(-2).replace(":", "")}
-                              <button className = {`delete-message ${!who ? "user" : "client"}`}
-                              style = {{display: `${(who) && (whoAmI !== "admin@admin.com") ? "none" : "flex"}`}}
-                      onClick = {() => deleteMessage(msg._id)}
-                      >X</button>
+                          <button
+                            className={`delete-message ${
+                              !who ? "user" : "client"
+                            }`}
+                            style={{
+                              display: `${
+                                who && whoAmI !== "admin@admin.com"
+                                  ? "none"
+                                  : "flex"
+                              }`,
+                            }}
+                            onClick={() => deleteMessage(msg._id)}
+                          >
+                            X
+                          </button>
                         </span>
-                        
+
                         <span
                           className={`${
                             !who ? "user message" : "client message"
@@ -316,23 +345,13 @@ export default function ChatPage() {
                           onMouseLeave={() => setMessageViewedIndex(null)}
                         >
                           {matc ? (
-                            <img
-                              src={matc[1]}
-                              alt="user-image"
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src =
-                                  "https://img.freepik.com/free-photo/abstract-luxury-plain-blur-grey-black-gradient-used-as-background-studio-wall-display-your-products_1258-101806.jpg?semt=ais_hybrid&w=740&q=80";
-                              }}
-                            />
+                            <ImageMemo img={matc[1]} />
                           ) : messageViewedIndex === idx ? (
                             (isLink && anchor) || userMessage
-                          ) : (
-                            isLink ? (
+                          ) : isLink ? (
                             anchor
-                            ) : (
+                          ) : (
                             censoredMemo
-                            )
                           )}
                         </span>
                       </span>

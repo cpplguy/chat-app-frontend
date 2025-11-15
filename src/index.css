@@ -111,16 +111,42 @@ font-weight:400;
   font-weight:lighter
 }
 /*settings*/
-#settings-container{
+#settings-containing{
   display:flex;
   flex-direction:column;
+  justify-content:center;
   align-items:center;
+  height:100vh;
+}
+#settings-container{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:center;
+  border:1px solid red;
+  height:85vh;
+  width:100vw;
+}
+.settings-section{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  width:50%;
+  align-items:center;
+  top:0;
+  margin-top:-20vh;
 }
 #settings-container h1{
   font-family: "Quicksand", san-serif;
   font-size:4.5vh;
   margin-top:2vh;
   margin-bottom:4vh;
+}
+#settings-container h2{
+  font-family: "Manrope", monospace;
+  margin:0 auto;
+  font-size:5vh;
+  margin-top:5vh;
 }
 #settings-container ul{
   display:flex;
@@ -133,6 +159,28 @@ font-weight:400;
   font-weight:bold;
   margin-top:5vh;
   font-size:3vh;
+  -webkit-text-stroke: 0.2px black;
+  color:white;
+}
+#settings-container label{
+  margin-top:15vh;
+  margin-bottom:5vh;
+}
+#settings-container input{
+  width:30vw;
+  height:5vh;
+  font-size:2.5vh;
+  border-radius:15px;
+  margin-bottom:2.5vh;
+}
+#settings-container button{
+  height:fit-content;
+  background-color:forestgreen;
+  font-weight:bolder;
+  font-size:3vh;
+  color:white;
+  border-radius:5.5px;
+  cursor:pointer;
 }
 /*media*/
 @keyframes spin{

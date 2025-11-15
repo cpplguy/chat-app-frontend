@@ -38,7 +38,7 @@ function App() {
       deleteCookies();
       navigate("/login",{replace:true} );
     }
-  },[])
+  },[navigate])
   useEffect(() => {
     (async () => {
       try {

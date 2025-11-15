@@ -374,15 +374,17 @@ h2{
     display:flex;
     justify-content:center;
     align-items:center;
-    width:3vh;
-    height:3vh;
+    width:3.5vh;
+    height:3.5vh;
     border-radius:50%;
     border: 0.01px solid black;
     margin-right:1vh;
 }
 .profile-picture img{
-    width:2.5vh;
-    height:2.5vh;
+    width:3.5vh;
+    height:3.5vh;
+    z-index:10;
+    border-radius:50%;
 }
 .username{
     display:flex;
