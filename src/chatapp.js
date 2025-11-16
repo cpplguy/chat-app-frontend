@@ -230,7 +230,7 @@ export default function ChatPage() {
                       itm.text.match(/image\((.*?)\)/i)
                         ? (itm.text = "[Image]")
                         : (itm.text = he.decode(itm.text));
-                      const { __v, _id, ...rest } = itm;
+                      const { __v, _id,image, ...rest } = itm;
                       return JSON.stringify(rest, null, 2);
                     })
                 )
@@ -267,7 +267,6 @@ export default function ChatPage() {
                   const matc = msg.text.match(/image\((.*?)\)/i);
                   const isLink = msg.text.match(/link\((.*?)\)/i);
                   const hasImage = !!(msg?.image && msg?.image!== "none");
-                  console.log("has image ", hasImage);
                   const linkText =
                     isLink && isLink[1].includes("https")
                       ? isLink[1]
