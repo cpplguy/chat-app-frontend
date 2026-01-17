@@ -13,6 +13,7 @@ import Dashboard from "./admin/dashboard.js";
 import NavBar from "./misc/navbar.js";
 import About from "./misc/about.js";
 import Settings from "./settings.js";
+import {RawMessagePage, RawUserPage} from "./admin/rawdata.js";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { deleteCookies } from "./misc/deletecookies.js";
@@ -148,6 +149,8 @@ function App() {
             </ProtectedPage>
           }
         />
+        <Route path="/admin/rawUserData" element={<RawUserPage />} />
+        <Route path="/admin/rawMessageData" element={<RawMessagePage />} />
         <Route path="/reload" element={<Loading />} />
         <Route path="/bannedPage" element={<BannedPage />} />
         <Route path="/about" element={<About />} />

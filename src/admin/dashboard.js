@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./admin.css";
 export default function AdminDashboard() {
-  const backendPath = `${/*
+  const backendPath = `${
+    /*
     !(process.env.REACT_APP_STATUS === "development")
       ? "/api/admin"
       : */ process.env.REACT_APP_SERVER + "/api/admin"
@@ -33,6 +34,8 @@ export default function AdminDashboard() {
     fetchUsers();
   }, [navigate, backendPath]);
   async function deleteUser(userId) {
+    const confirmDel = window.confirm("Are you sure you want to delete this user?");
+    if (!confirmDel) return;
     try {
       const response = await fetch(backendPath + "/users/delete", {
         method: "DELETE",
@@ -58,7 +61,7 @@ export default function AdminDashboard() {
   }
   async function banUser(userId, path, method) {
     const messagePrompt = prompt(
-      "Please enter a reason for banning the user (add :unban to unban a user):"
+      "Please enter a reason for banning the user (add :unban to unban a user):",
     );
     if (!messagePrompt) {
       alert("Please enter a reason.");
@@ -75,14 +78,15 @@ export default function AdminDashboard() {
     const jsonRes = await banFetch.json();
     if (banFetch.ok) {
       setUsers(
-        users.map(
-          (user) =>
-            user._id === userId && {
-              ...user,
-              banned: true,
-              bannedMessage: messagePrompt,
-            }
-        )
+        users.map((user) =>
+          user._id === userId
+            ? {
+                ...user,
+                banned: true,
+                bannedMessage: messagePrompt,
+              }
+            : user,
+        ),
       );
       console.log("User banned successfully.");
       alert("User banned successfully.");
@@ -99,6 +103,10 @@ export default function AdminDashboard() {
       <div id="dashboard">
         <header id="admin-header">
           <h1>Admin Dashboard</h1>
+          <div id="admin-button-container">
+            <button onClick={() => navigate("/admin/rawUserData")}>Get Raw User Data</button>
+            <button onClick={() => navigate("/admin/rawMessageData")}>Get Raw Message Data</button>
+          </div>
         </header>
         <table
           style={{
@@ -119,7 +127,7 @@ export default function AdminDashboard() {
               return (
                 <tr key={user._id}>
                   <td className="table-name">{user.email}</td>
-                  <td className = "table-banned">
+                  <td className="table-banned">
                     Banned:{" "}
                     <span style={{ fontWeight: "bold" }}>
                       {user.banned
@@ -144,11 +152,10 @@ export default function AdminDashboard() {
                         >
                           Ban User
                         </button>
-                         {/*ip ban no work cuz erverybody share same ip */}
+                        {/*ip ban no work cuz erverybody share same ip */}
                         <button
                           className="ipban user"
                           disabled={true}
-                         
                           onClick={() =>
                             banUser(user._id, "/users/ipban", "POST")
                           }

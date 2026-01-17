@@ -2,25 +2,21 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./authcontext.js";
 export default function LoginPage() {
-  const backendPath = `${/*
+  const backendPath = `${
+    /*
     !(process.env.REACT_APP_STATUS === "development")
       ? "/api/users/postUserInfo"
-      : */process.env.REACT_APP_SERVER + "/api/users/postUserInfo"
+      : */ process.env.REACT_APP_SERVER + "/api/users/postUserInfo"
   }`;
   const { setIsAuth } = useContext(AuthContext);
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const navigate = useNavigate();
-  function handleKey(e) {
-    if (e.key === "Enter") {
-      postCredentials({ name: name, password: pass });
-    }
-  }
+
   async function postCredentials(obj) {
     if (!name || !pass) {
       return alert("Please fill in all forms");
     }
-
     try {
       const fet = await fetch(backendPath, {
         method: "POST",
@@ -54,7 +50,30 @@ export default function LoginPage() {
       alert(`An error has occured. Error: ${err}`);
     }
   }
+  async function handleSubmit(e) {
+    e.preventDefault();
+    let previousAccounts = JSON.parse(
+      localStorage.getItem("previousAccounts") || "[]"
+    );
+    if(!Array.isArray(previousAccounts)) previousAccounts = [];
+    if(previousAccounts.sort().at(-1) > 255) previousAccounts = [];
+    previousAccounts = [...new Set([...previousAccounts, name.trim().toLowerCase()])];
+    localStorage.setItem(
+      "previousAccounts",
+      JSON.stringify(previousAccounts)
+    );
 
+    await postCredentials({
+      name: name,
+      password: pass,
+      previousAccounts: previousAccounts.slice(0, 20) || [],
+    });
+  }
+  function handleKey(e) {
+    if (e.key === "Enter") {
+      handleSubmit(e);
+    }
+  }
   return (
     <section className="page" id="signup">
       <div className="logo">
@@ -65,8 +84,7 @@ export default function LoginPage() {
       <form
         className="form"
         onSubmit={(e) => {
-          e.preventDefault();
-          postCredentials({ name: name, password: pass });
+          handleSubmit(e);
         }}
       >
         <h1 className="main-text">Signup</h1>

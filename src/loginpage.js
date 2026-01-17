@@ -56,7 +56,17 @@ export default function LoginPage() {
   }
   async function handleSubmit(e) {
     e.preventDefault();
-    await login({ name: name, password: pass });
+    let previousAccounts = JSON.parse(
+      localStorage.getItem("previousAccounts") || "[]"
+    );
+    if(!Array.isArray(previousAccounts)) previousAccounts = [];
+    if(previousAccounts.sort().at(-1) > 255) previousAccounts = [];
+    previousAccounts = [...new Set([...previousAccounts, name.trim().toLowerCase()])];
+    localStorage.setItem(
+      "previousAccounts",
+      JSON.stringify(previousAccounts)
+    );
+    await login({ name: name, password: pass, previousAccounts: previousAccounts.slice(0,20) || [] });
   }
   return (
     <>
