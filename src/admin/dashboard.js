@@ -136,7 +136,7 @@ export default function AdminDashboard() {
                     </span>
                   </td>
                   <td className="admin-commands">
-                    {user.email !== "admin@admin.com" && (
+                    {(![...JSON.parse(process.env.REACT_APP_ADMINS)].includes(user.email)) && (
                       <>
                         <button
                           className="delete user"

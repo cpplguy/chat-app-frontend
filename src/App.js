@@ -18,6 +18,7 @@ import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { deleteCookies } from "./misc/deletecookies.js";
 function App() {
+  console.log(process.env);
   const location = useLocation();
   const backendPath = `${/*
     !(process.env.REACT_APP_STATUS === "development")
@@ -34,7 +35,9 @@ function App() {
   const [bannedToken, setBannedToken] = useState(false);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    if(!localStorage.getItem("loggedOut")){
+    if(!localStorage.getItem("loggedOut" /*add number to the localStorage key
+       to make sure everybody gets logged out,
+       or like change the name idk */ )){
       localStorage.setItem("loggedOut","true")
       deleteCookies();
       navigate("/login",{replace:true} );

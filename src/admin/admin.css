@@ -5,6 +5,9 @@ table .user{
     color:black;
     background-color:lightblue;
 }
+tr{
+    height:6vh;
+}
 table button{
 
     height:4vh;

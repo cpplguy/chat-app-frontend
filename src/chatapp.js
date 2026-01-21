@@ -325,7 +325,7 @@ export default function ChatPage() {
                             }`}
                             style={{
                               display: `${
-                                who && whoAmI !== "admin@admin.com"
+                                who && ![ ...JSON.parse(process.env.REACT_APP_ADMINS)].includes(whoAmI)
                                   ? "none"
                                   : "flex"
                               }`,
