@@ -152,10 +152,12 @@ export default function AdminDashboard() {
                         >
                           Ban User
                         </button>
-                        {/*ip ban no work cuz erverybody share same ip */}
+                        {/*ip ban no work cuz erverybody share same ip
+                        upd fixed it
+                        */}
                         <button
                           className="ipban user"
-                          disabled={true}
+                          disabled={user.ip.length>=60}
                           onClick={() =>
                             banUser(user._id, "/users/ipban", "POST")
                           }

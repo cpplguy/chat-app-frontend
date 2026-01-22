@@ -12,6 +12,8 @@ export default function BannedPage() {
       <h2 style = {{textAlign:"center"}}>
         To appeal the ban (possibly get unbanned), please email{" "}
         <a href="mailto:ramonguo136@gmail.com">ramonguo136@gmail.com</a>
+        or
+         <a href="mailto:ramon.guo@jerichoschools.org">ramon.guo@jerichoschools.org (school email)</a>
       </h2>
     </div>
   );
