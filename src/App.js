@@ -37,7 +37,7 @@ function App() {
     if(!localStorage.getItem("loggedOut3" /*add number to the localStorage key
        to make sure everybody gets logged out,
        or like change the name idk */ )){
-      localStorage.setItem("loggedOut","true")
+      localStorage.setItem("loggedOut3","true")
       deleteCookies();
       navigate("/login",{replace:true} );
     }
