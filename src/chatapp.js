@@ -14,6 +14,20 @@ import Loading from "./misc/loading.js";
 import he from "he";
 import filterObscenity from "./obscenity.js";
 import "./chatapp.css";
+// ↓ PASTE HERE
+const RANKS = {
+  owner:     { label: "Owner",     color: "#FF4500", badge: "👑" },
+  admin:     { label: "Admin",     color: "#FF2D55", badge: "🛡️" },
+  moderator: { label: "Moderator", color: "#30D158", badge: "🔨" },
+  helper:    { label: "Helper",    color: "#0A84FF", badge: "💬" },
+  vip:       { label: "VIP",       color: "#BF5AF2", badge: "💎" },
+  member:    { label: "Member",    color: "#8E8E93", badge: "👤" },
+};
+const getRankBadge = (rank) => {
+  const r = RANKS[rank] ?? RANKS.member;
+  return <span style={{color:r.color, fontSize:"0.7rem", fontWeight:"bold", border:`1px solid ${r.color}`, borderRadius:"999px", padding:"1px 6px", marginLeft:"4px"}}>{r.badge} {r.label}</span>;
+};
+
 const CensorWordsMemo = React.memo(({ text }) => filterObscenity(text));
 const ImageMemo = React.memo(({ img }) => (
   <img
@@ -315,6 +329,9 @@ export default function ChatPage() {
                                 )
                               : msg.email
                             : ""}{" "}
+: msg.email
+: ""}{" "}
+{who && getRankBadge(msg.rank)}{" "}   // ← ADD THIS LINE
                           {who && date}{" "}
                           {who &&
                             time.slice(0, +time.slice(0, 2) ? 5 : 4) +
