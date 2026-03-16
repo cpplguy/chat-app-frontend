@@ -331,7 +331,7 @@ export default function ChatPage() {
                             : ""}{" "}
 : msg.email
 : ""}{" "}
-{who && getRankBadge(msg.rank)}{" "}   // ← ADD THIS LINE
+{who && getRankBadge(msg.rank)}{" "}
                           {who && date}{" "}
                           {who &&
                             time.slice(0, +time.slice(0, 2) ? 5 : 4) +
