@@ -14,6 +14,6 @@
       }
       window.location.reload();
     } catch (err) {
-      alert("error occured, error: ", err);
+      alert("error occured, error: " + err);
     }
   }

@@ -45,7 +45,7 @@ function App() {
   useEffect(() => {
     (async () => {
       try {
-        const fetchAuth = await fetch(backendPath, {
+         const fetchAuth = await fetch(backendPath, {
           method: "GET",
           credentials: "include",
           headers: {
@@ -78,8 +78,10 @@ function App() {
         setLoading(false);
       } catch (err) {
         setIsAuth((prev) => ({ ...prev, auth: false }));
-        console.error("Error fetching auth status:", err);
-        setLoading(false);
+        console.error("Error fetching auth status:" + err);
+          alert("an error occurred. Error: " + err);
+          setLoading(false);
+        
       }
     })();
     // eslint-disable-next-line

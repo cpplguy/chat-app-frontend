@@ -183,6 +183,7 @@ export default function ChatPage() {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+  /*
   useEffect(() => {
     const observer = new IntersectionObserver((item) => {
       if (item[0].isIntersecting && messages.length > 0) {
@@ -194,7 +195,7 @@ export default function ChatPage() {
       observer.observe(topRef.current);
     }
     return () => observer.disconnect();
-  }, []);
+  }, []);*/
   if (peopleOnline === 0) return <Loading />; // uses peopleOnline to determine whether page has loaded. Much better than a seperate usestate.
   return (
     <>

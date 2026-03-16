@@ -17,6 +17,7 @@ export default function LoginPage() {
     if (!name || !pass) {
       return alert("Please fill in all forms");
     }
+    let json;
     try {
       const fet = await fetch(backendPath, {
         method: "POST",
@@ -27,7 +28,7 @@ export default function LoginPage() {
         credentials: "include",
       });
       const data = await fet.json();
-      const json = JSON.stringify(data);
+       json = JSON.stringify(data);
       switch (fet.status) {
         case 400:
           alert("Please enter a valid email address.");
@@ -46,8 +47,8 @@ export default function LoginPage() {
           alert(`Server code: ${fet.status}. Error message: ${json}`);
       }
     } catch (err) {
-      console.error(err);
-      alert(`An error has occured. Error: ${err}`);
+      console.error("error occured, "+err);
+      alert(`An error has occured. Error: ${json}`);
     }
   }
   async function handleSubmit(e) {
