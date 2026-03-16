@@ -5,7 +5,7 @@
     transition: all 0.2s;
 }
 body{
-    background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 50%, #4477ff 100%);
+    background: #313338;
     height: 100vh;
 }
 #side{
