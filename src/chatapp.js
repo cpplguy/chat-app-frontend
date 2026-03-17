@@ -15,12 +15,12 @@ import he from "he";
 import filterObscenity from "./obscenity.js";
 import "./chatapp.css";
 const RANKS = {
-  owner:     { label: "Owner",     color: "#FF4500", badge: "👑" },
-  admin:     { label: "Admin",     color: "#FF2D55", badge: "🛡️" },
-  moderator: { label: "Moderator", color: "#30D158", badge: "🔨" },
-  helper:    { label: "Helper",    color: "#0A84FF", badge: "💬" },
-  vip:       { label: "VIP",       color: "#BF5AF2", badge: "💎" },
-  member:    { label: "Member",    color: "#8E8E93", badge: "👤" },
+  Founder:  { label: "Founder", color: "#FF0000", badge: "👑" },
+  Owner:    { label: "Owner",   color: "#00BFFF", badge: "⭐" },
+  Admin:    { label: "Admin",   color: "#BF5AF2", badge: "🛡️" },
+  Mod:      { label: "Mod",     color: "#FFD700", badge: "🔨" },
+  Donor:    { label: "Donor",   color: "#00C853", badge: "💚" },
+  Member:   { label: "Member",  color: "#555555", badge: "👤" },
 };
 const getRankBadge = (rank) => {
   const r = RANKS[rank] ?? RANKS.member;
