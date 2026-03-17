@@ -88,7 +88,13 @@ export default function ChatPage() {
       }
     };
     const mutedHandler = ({ secondsLeft }) => {
-      alert(`You are muted for ${secondsLeft} more seconds!`);
+      const minutes = Math.floor(secondsLeft / 60);
+      const seconds = secondsLeft % 60;
+      const timeLeft = minutes > 0 ? `${minutes} minute(s) and ${seconds} second(s)` : `${seconds} second(s)`;
+      alert(`🔇 You are muted for ${timeLeft}!`);
+    };
+    const unmutedHandler = () => {
+      alert("🔊 You have been unmuted!");
     };
     const socketCleanUp = () => {
       if (socketRef.current) {
@@ -100,6 +106,7 @@ export default function ChatPage() {
         socket.off("is banned", banHandler);
         socket.off("connect_error", errorHandler);
         socket.off("muted", mutedHandler);
+        socket.off("unmuted", unmutedHandler);
         socket.disconnect();
       }
     };
@@ -118,6 +125,7 @@ export default function ChatPage() {
         socket.on("is banned", banHandler);
         socket.on("connect_error", errorHandler);
         socket.on("muted", mutedHandler);
+        socket.on("unmuted", unmutedHandler);
         socket.connect();
         console.log("connected to socket server");
       } catch (err) {
