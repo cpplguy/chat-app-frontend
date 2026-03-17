@@ -14,7 +14,6 @@ import Loading from "./misc/loading.js";
 import he from "he";
 import filterObscenity from "./obscenity.js";
 import "./chatapp.css";
-// ↓ PASTE HERE
 const RANKS = {
   owner:     { label: "Owner",     color: "#FF4500", badge: "👑" },
   admin:     { label: "Admin",     color: "#FF2D55", badge: "🛡️" },
@@ -27,7 +26,6 @@ const getRankBadge = (rank) => {
   const r = RANKS[rank] ?? RANKS.member;
   return <span style={{color:r.color, fontSize:"0.7rem", fontWeight:"bold", border:`1px solid ${r.color}`, borderRadius:"999px", padding:"1px 6px", marginLeft:"4px"}}>{r.badge} {r.label}</span>;
 };
-
 const CensorWordsMemo = React.memo(({ text }) => filterObscenity(text));
 const ImageMemo = React.memo(({ img }) => (
   <img
@@ -47,7 +45,6 @@ export default function ChatPage() {
   const bottomRef = useRef(null);
   const topRef = useRef(null);
   const socketRef = useRef(null);
-  //message states
   const [message, setMessage] = useState("");
   const [messageLength, setMessageLength] = useState(0);
   const [messages, setMessages] = useState([]);
@@ -55,10 +52,8 @@ export default function ChatPage() {
   const [messageViewedIndex, setMessageViewedIndex] = useState(null);
   // eslint-disable-next-line
   const [amountOfMessages, setAmountOfMessages] = useState(0);
-  //
   const [disabled, setDisabled] = useState(false);
   const [peopleOnline, setPeopleOnline] = useState(0);
-
   const [usernames, setUsernames] = useState(["No One"]);
 
   useEffect(() => {
@@ -67,18 +62,12 @@ export default function ChatPage() {
       setAmountOfMessages(newMessage.length);
     };
     const handler2 = (users) => {
-      if (!isAuth.auth) {
-        navigate("/");
-        return;
-      }
+      if (!isAuth.auth) { navigate("/"); return; }
       setUsernames(users);
     };
-    const handler3 = (length) => {
-      setPeopleOnline(length);
-    };
+    const handler3 = (length) => { setPeopleOnline(length); };
     const connectHandler = () => {
       const socket = socketRef.current;
-
       socket.emit("join room", roomId || "main");
       socket.emit("request users connected");
     };
@@ -89,42 +78,35 @@ export default function ChatPage() {
     };
     const banHandler = (bannedStatus) => {
       if (bannedStatus.banned) {
-        console.log("User has banned account.");
         setBannedMessage(bannedStatus.reason || "No reason given");
         setBannedToken(true);
         socketCleanUp();
         navigate("/bannedPage", { replace: true });
       } else if (bannedStatus.error) {
-        console.log(bannedStatus.error);
         socketCleanUp();
         navigate("/", { replace: true });
       }
+    };
+    const mutedHandler = ({ secondsLeft }) => {
+      alert(`You are muted for ${secondsLeft} more seconds!`);
     };
     const socketCleanUp = () => {
       if (socketRef.current) {
         const socket = socketRef.current;
         socket.off("connect", connectHandler);
         socket.off("chat message", handler);
-
         socket.off("users connected", handler2);
-
         socket.off("users online", handler3);
-
         socket.off("is banned", banHandler);
-
         socket.off("connect_error", errorHandler);
-
+        socket.off("muted", mutedHandler);
         socket.disconnect();
       }
     };
     const init = () => {
       try {
-        if (/[^a-z0-9]/.test(roomId)) {
-          navigate("/");
-        }
-        if (/[A-Z]/.test(roomId)) {
-          navigate("/chat/" + roomId.toLowerCase());
-        }
+        if (/[^a-z0-9]/.test(roomId)) navigate("/");
+        if (/[A-Z]/.test(roomId)) navigate("/chat/" + roomId.toLowerCase());
         setWhoAmI(isAuth.user);
         if (!isAuth.token) throw new Error("No token provided.");
         const socket = createSocket({ auth: isAuth.token });
@@ -135,6 +117,7 @@ export default function ChatPage() {
         socket.on("users online", handler3);
         socket.on("is banned", banHandler);
         socket.on("connect_error", errorHandler);
+        socket.on("muted", mutedHandler);
         socket.connect();
         console.log("connected to socket server");
       } catch (err) {
@@ -144,73 +127,39 @@ export default function ChatPage() {
     init();
     return () => socketCleanUp();
   }, [roomId, isAuth?.token]);
+
   function setDisabledState() {
     setDisabled(true);
-    setTimeout(() => {
-      setDisabled(false);
-    }, 3000);
+    setTimeout(() => { setDisabled(false); }, 3000);
   }
   const sendMessage = (newMessage) => {
-    if (!socketRef.current) {
-      console.error("socket not mounted");
-    }
+    if (!socketRef.current) { console.error("socket not mounted"); }
     socketRef.current.emit("chat message", newMessage, (error) => {
-      if (error) {
-        navigate("/", { replace: true });
-      }
+      if (error) navigate("/", { replace: true });
     });
   };
   function sendHandler(e) {
     if (disabled) return;
     e.preventDefault();
-    if (message.trim() === "") {
-      alert("Message cannot be empty.");
-      return;
-    }
+    if (message.trim() === "") { alert("Message cannot be empty."); return; }
     const matc = message.match(/image\((.*?)\)/i);
-    if (
-      message.length > 100 &&
-      !(/:bypass/i.test(message) && message.length < 5000) &&
-      !matc
-    ) {
+    if (message.length > 100 && !(/:bypass/i.test(message) && message.length < 5000) && !matc) {
       alert("Message cannot exceed character limit.");
       return;
     }
-
-    if (matc) {
-      sendMessage(matc[0]);
-    } else {
-      sendMessage(message);
-    }
+    if (matc) { sendMessage(matc[0]); } else { sendMessage(message); }
     setMessage("");
     setDisabledState();
     setMessageLength(0);
   }
   function deleteMessage(id) {
-    if (socketRef.current) {
-      socketRef.current.emit("delete message", id);
-    }
+    if (socketRef.current) socketRef.current.emit("delete message", id);
   }
-
   useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-  /*
-  useEffect(() => {
-    const observer = new IntersectionObserver((item) => {
-      if (item[0].isIntersecting && messages.length > 0) {
-        console.log("viewed");
-        observer.disconnect();
-      }
-    });
-    if (topRef.current) {
-      observer.observe(topRef.current);
-    }
-    return () => observer.disconnect();
-  }, []);*/
-  if (peopleOnline === 0) return <Loading />; // uses peopleOnline to determine whether page has loaded. Much better than a seperate usestate.
+
+  if (peopleOnline === 0) return <Loading />;
   return (
     <>
       <SideBar usernames={usernames} />
@@ -218,206 +167,101 @@ export default function ChatPage() {
         <header>
           <h2>
             <em title={roomId}>
-              {(roomId.length > 30
-                ? roomId.slice(0, 30) + "..."
-                : roomId.toLowerCase() !== "main"
-                ? roomId
-                : "Main Chat") || "Main Chat"}{" "}
+              {(roomId.length > 30 ? roomId.slice(0, 30) + "..." : roomId.toLowerCase() !== "main" ? roomId : "Main Chat") || "Main Chat"}{" "}
               Page
             </em>
           </h2>
-          <h2
-            id="people-online"
-            title="Current amount of users online. Green dot signializes that people (other than you) are online."
-          >
+          <h2 id="people-online" title="Current amount of users online.">
             Users Online: {peopleOnline}
-            <span
-              className={`${peopleOnline > 1 ? "green" : "red"} circle`}
-            ></span>
+            <span className={`${peopleOnline > 1 ? "green" : "red"} circle`}></span>
           </h2>
           <button
             id="copy-chat-data"
             onClick={() => {
-              navigator.clipboard
-                .writeText(
-                  `{roomId: ${roomId},\n data-format: JSON} \n\n` +
-                    messages.map((itm) => {
-                      itm.text.match(/image\((.*?)\)/i)
-                        ? (itm.text = "[Image]")
-                        : (itm.text = he.decode(itm.text));
-                      const { __v, _id,image, ...rest } = itm;
-                      return JSON.stringify(rest, null, 2);
-                    })
-                )
-                .then(() => alert("Chat messages copied to clipboard"))
-                .catch((err) => console.error("failed to copy. Error: ", err));
+              navigator.clipboard.writeText(
+                `{roomId: ${roomId},\n data-format: JSON} \n\n` +
+                messages.map((itm) => {
+                  itm.text.match(/image\((.*?)\)/i) ? (itm.text = "[Image]") : (itm.text = he.decode(itm.text));
+                  const { __v, _id, image, ...rest } = itm;
+                  return JSON.stringify(rest, null, 2);
+                })
+              ).then(() => alert("Chat messages copied to clipboard")).catch((err) => console.error("failed to copy. Error: ", err));
             }}
           >
             Copy Chat Messages
           </button>
         </header>
-        {/*
-        <div id="message-length-container-container">
-            <div id="message-length-container">
-              <h6>{amountOfMessages}</h6>
-            </div>
-          </div>*/}
         <div id="messages-container">
           <p>
-            <span
-              ref={topRef}
-              id="top"
-              style={{ border: "1px solid white", zIndex: "10000" }}
-            ></span>
-
-            {messages?.length === 0
-              ? "messages will appear here"
-              : messages.map((msg, idx) => {
-                  const userMessage = he.decode(msg.text);
-                  const d = new Date(msg.createdAt);
-                  const date = d.toLocaleDateString();
-                  const time = d.toLocaleTimeString();
-                  const replaced = msg.email.replace(/📱|💻/g, "").trim();
-                  const who = whoAmI !== replaced;
-                  const matc = msg.text.match(/image\((.*?)\)/i);
-                  const isLink = msg.text.match(/link\((.*?)\)/i);
-                  const hasImage = !!(msg?.image && msg?.image!== "none");
-                  const linkText =
-                    isLink && isLink[1].includes("https")
-                      ? isLink[1]
-                      : isLink && `https://${isLink[1]}`;
-                  const censoredMemo = (
-                    <CensorWordsMemo text={linkText || userMessage} />
-                  );
-                  const anchor = (
-                    <a href={linkText} target="_blank" rel="noreferrer">
-                      {censoredMemo}
-                    </a>
-                  );
-
-                  return (
-                    <Fragment key={msg._id}>
-                      <span className="user-message-container">
-                        <span className="username" title={msg.email}>
-                          {who && (
-                            <span
-                              className="profile-picture"
-                              style={
-                                msg.color === "rainbow"
-                                  ? {
-                                      background:
-                                        "linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet)",
-                                      backgroundSize: "400% 400%",
-                                      animation: "rainbow 8s infinite",
-                                    }
-                                  : {
-                                      backgroundColor: `${
-                                        msg.color || "lightgray"
-                                      }`,
-                                    }
-                              }
-                            >
-                              <ImageMemo img = {hasImage ? msg.image : "/icons8-account-48.png"}/>
-                            </span>
-                          )}
-                          {who
-                            ? msg.email?.length > 21
-                              ? msg.email.slice(0, 10) +
-                                "..." +
-                                msg.email.slice(
-                                  msg.email.length - 9,
-                                  msg.email.length
-                                )
-                              : msg.email
-                            : ""}{" "}
-{getRankBadge(msg.rank)}{" "}                       
-{who && date}{" "}
-                          {who &&
-                            time.slice(0, +time.slice(0, 2) ? 5 : 4) +
-                              time.slice(-2).replace(":", "")}
-                          <button
-                            className={`delete-message ${
-                              !who ? "user" : "client"
-                            }`}
-                            style={{
-                              display: `${
-                                who && ![ ...JSON.parse(process.env.REACT_APP_ADMINS)].includes(whoAmI)
-                                  ? "none"
-                                  : "flex"
-                              }`,
-                            }}
-                            onClick={() => deleteMessage(msg._id)}
-                          >
-                            X
-                          </button>
+            <span ref={topRef} id="top" style={{ border: "1px solid white", zIndex: "10000" }}></span>
+            {messages?.length === 0 ? "messages will appear here" : messages.map((msg, idx) => {
+              const userMessage = he.decode(msg.text);
+              const d = new Date(msg.createdAt);
+              const date = d.toLocaleDateString();
+              const time = d.toLocaleTimeString();
+              const replaced = msg.email.replace(/📱|💻/g, "").trim();
+              const who = whoAmI !== replaced;
+              const matc = msg.text.match(/image\((.*?)\)/i);
+              const isLink = msg.text.match(/link\((.*?)\)/i);
+              const hasImage = !!(msg?.image && msg?.image !== "none");
+              const linkText = isLink && isLink[1].includes("https") ? isLink[1] : isLink && `https://${isLink[1]}`;
+              const censoredMemo = <CensorWordsMemo text={linkText || userMessage} />;
+              const anchor = <a href={linkText} target="_blank" rel="noreferrer">{censoredMemo}</a>;
+              return (
+                <Fragment key={msg._id}>
+                  <span className="user-message-container">
+                    <span className="username" title={msg.email}>
+                      {who && (
+                        <span className="profile-picture" style={msg.color === "rainbow" ? { background: "linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet)", backgroundSize: "400% 400%", animation: "rainbow 8s infinite" } : { backgroundColor: `${msg.color || "lightgray"}` }}>
+                          <ImageMemo img={hasImage ? msg.image : "/icons8-account-48.png"} />
                         </span>
-
-                        <span
-                          className={`${
-                            !who ? "user message" : "client message"
-                          }`}
-                          onMouseEnter={() => setMessageViewedIndex(idx)}
-                          onMouseLeave={() => setMessageViewedIndex(null)}
-                        >
-                          {matc ? (
-                            <ImageMemo img={matc[1]} />
-                          ) : messageViewedIndex === idx ? (
-                            (isLink && anchor) || userMessage
-                          ) : isLink ? (
-                            anchor
-                          ) : (
-                            censoredMemo
-                          )}
-                        </span>
-                      </span>
-                      <br />
-                    </Fragment>
-                  );
-                })}
+                      )}
+                      {who ? msg.email?.length > 21 ? msg.email.slice(0, 10) + "..." + msg.email.slice(msg.email.length - 9, msg.email.length) : msg.email : ""}{" "}
+                      {getRankBadge(msg.rank)}{" "}
+                      {who && date}{" "}
+                      {who && time.slice(0, +time.slice(0, 2) ? 5 : 4) + time.slice(-2).replace(":", "")}
+                      <button
+                        className={`delete-message ${!who ? "user" : "client"}`}
+                        style={{ display: `${who && ![...JSON.parse(process.env.REACT_APP_ADMINS)].includes(whoAmI) ? "none" : "flex"}` }}
+                        onClick={() => deleteMessage(msg._id)}
+                      >
+                        X
+                      </button>
+                    </span>
+                    <span
+                      className={`${!who ? "user message" : "client message"}`}
+                      onMouseEnter={() => setMessageViewedIndex(idx)}
+                      onMouseLeave={() => setMessageViewedIndex(null)}
+                    >
+                      {matc ? <ImageMemo img={matc[1]} /> : messageViewedIndex === idx ? (isLink && anchor) || userMessage : isLink ? anchor : censoredMemo}
+                    </span>
+                  </span>
+                  <br />
+                </Fragment>
+              );
+            })}
           </p>
-          <div
-            id="bottom"
-            ref={bottomRef}
-            style={{ position: "absolute", bottom: "0" }}
-          ></div>
+          <div id="bottom" ref={bottomRef} style={{ position: "absolute", bottom: "0" }}></div>
         </div>
         <section id="input-container-container">
           <div id="input-container">
             <div id="char-count-container">
-              <p
-                id="char-count"
-                style={{ color: messageLength > 100 ? "red" : "gainsboro" }}
-              >
-                {messageLength}/100
-              </p>
+              <p id="char-count" style={{ color: messageLength > 100 ? "red" : "gainsboro" }}>{messageLength}/100</p>
             </div>
             <input
               type="text"
               value={message}
-              onChange={(e) => {
-                setMessage(e.target.value);
-                setMessageLength(e.target.value.length);
-              }}
+              onChange={(e) => { setMessage(e.target.value); setMessageLength(e.target.value.length); }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  if (
-                    (message.trim() && !disabled && messageLength <= 100) ||
-                    /:bypass/i.test(message) ||
-                    message.match(/image\((.*?)\)/i)
-                  ) {
+                  if ((message.trim() && !disabled && messageLength <= 100) || /:bypass/i.test(message) || message.match(/image\((.*?)\)/i)) {
                     sendHandler(e);
                   }
                 }
               }}
               placeholder="Type your message."
             />
-            <button
-              disabled={!message.trim()}
-              id="send-message"
-              onClick={(e) => {
-                sendHandler(e);
-              }}
-            >
+            <button disabled={!message.trim()} id="send-message" onClick={(e) => { sendHandler(e); }}>
               <h1>↑</h1>
             </button>
           </div>
