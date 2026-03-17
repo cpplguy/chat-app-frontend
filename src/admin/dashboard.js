@@ -68,8 +68,9 @@ export default function AdminDashboard() {
   }
 
   async function setRank(email) {
-    const rank = prompt("Enter rank (owner, admin, moderator, helper, vip, member):");
-    if (!rank) return;
+    const rankInput = prompt("Enter rank (Founder, Owner, Admin, Mod, Donor, Member):");
+    if (!rankInput) return;
+    const rank = rankInput.toLowerCase();
     const res = await fetch(backendPath + "/users/rank", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -79,7 +80,7 @@ export default function AdminDashboard() {
     const json = await res.json();
     if (res.ok) {
       setUsers(users.map((u) => u.email === email ? { ...u, rank } : u));
-      alert(`Rank set to ${rank}!`);
+      alert(`Rank set to ${rankInput}!`);
     } else {
       alert(`Error: ${json.error}`);
     }
@@ -111,7 +112,7 @@ export default function AdminDashboard() {
                   Banned: <span style={{ fontWeight: "bold" }}>{user.banned ? "Reason: " + user.bannedReason : "not banned"}</span>
                 </td>
                 <td className="table-rank">
-                  Rank: <span style={{ fontWeight: "bold" }}>{user.rank || "member"}</span>
+                  Rank: <span style={{ fontWeight: "bold" }}>{user.rank ? user.rank.charAt(0).toUpperCase() + user.rank.slice(1) : "Member"}</span>
                 </td>
                 <td className="admin-commands">
                   {(![...JSON.parse(process.env.REACT_APP_ADMINS)].includes(user.email)) && (
