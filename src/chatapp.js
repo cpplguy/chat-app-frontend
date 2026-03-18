@@ -14,18 +14,7 @@ import Loading from "./misc/loading.js";
 import he from "he";
 import filterObscenity from "./obscenity.js";
 import "./chatapp.css";
-const RANKS = {
-  Founder:  { label: "Founder", color: "#FF0000", badge: "👑" },
-  Owner:    { label: "Owner",   color: "#00BFFF", badge: "⭐" },
-  Admin:    { label: "Admin",   color: "#BF5AF2", badge: "🛡️" },
-  Mod:      { label: "Mod",     color: "#FFD700", badge: "🔨" },
-  Donor:    { label: "Donor",   color: "#00C853", badge: "💚" },
-  Member:   { label: "Member",  color: "#555555", badge: "👤" },
-};
-const getRankBadge = (rank) => {
-  const r = RANKS[rank] ?? RANKS.member;
-  return <span style={{color:r?.color || "gray", fontSize:"0.7rem", fontWeight:"bold", border:`1px solid ${r.color}`, borderRadius:"999px", padding:"1px 6px", marginLeft:"4px"}}>{r.badge} {r.label}</span>;
-};
+import { getRankBadge } from "./ranks.js";
 const CensorWordsMemo = React.memo(({ text }) => filterObscenity(text));
 const ImageMemo = React.memo(({ img }) => (
   <img
