@@ -9,5 +9,6 @@ export const RANKS = {
 
 export const getRankBadge = (rank) => {
   const r = RANKS[rank] ?? RANKS.member;
-  return <span style={{color:r.color, fontSize:"0.7rem", fontWeight:"bold", border:`1px solid ${r.color}`, borderRadius:"999px", padding:"1px 6px", marginLeft:"4px"}}>{r.badge} {r.label}</span>;
+  const rankColor = r?.color || "gray"
+  return <span style={{color:rankColor, fontSize:"0.7rem", fontWeight:"bold", border:`1px solid ${rankColor}`, borderRadius:"999px", padding:"1px 6px", marginLeft:"4px"}}>{r.badge} {r.label}</span>;
 };
