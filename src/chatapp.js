@@ -14,7 +14,7 @@ import Loading from "./misc/loading.js";
 import he from "he";
 import filterObscenity from "./obscenity.js";
 import "./chatapp.css";
-import { getRankBadge } from "./ranks.js";
+import { getRankBadge } from "./rank.js";
 const CensorWordsMemo = React.memo(({ text }) => filterObscenity(text));
 const ImageMemo = React.memo(({ img }) => (
   <img
