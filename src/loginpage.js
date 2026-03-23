@@ -51,7 +51,6 @@ export default function LoginPage() {
       backgroundColor: "#313338",
     }}>
       <div style={{
-        position: "relative",
         backgroundColor: "#2b2d31",
         borderRadius: "16px",
         padding: "40px",
@@ -129,20 +128,17 @@ export default function LoginPage() {
         <button
           onClick={() => navigate("/signup")}
           style={{
-            position: "absolute",
-            bottom: "16px",
-            right: "16px",
+            alignSelf: "flex-end",
             background: "none",
-            border: "1px solid #4e5058",
+            border: "none",
             color: "#b5bac1",
-            borderRadius: "8px",
-            padding: "6px 12px",
+            padding: "6px 0",
             cursor: "pointer",
             fontSize: "0.8rem",
             transition: "all 0.2s",
           }}
-          onMouseEnter={e => e.target.style.borderColor = "#5865F2"}
-          onMouseLeave={e => e.target.style.borderColor = "#4e5058"}
+          onMouseEnter={e => e.target.style.color = "white"}
+          onMouseLeave={e => e.target.style.color = "#b5bac1"}
         >
           Sign Up
         </button>
