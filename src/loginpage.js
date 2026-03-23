@@ -45,6 +45,9 @@ export default function LoginPage() {
       justifyContent: "center",
       alignItems: "center",
       height: "100vh",
+      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 100 100'%3E%3Ctext y='75' font-size='60' transform='rotate(-30 50 50)' opacity='0.12' fill='white'%3E%E2%99%9C%3C/text%3E%3C/svg%3E")`,
+      backgroundRepeat: "repeat",
+      backgroundSize: "80px 80px",
       backgroundColor: "#313338",
     }}>
       <div style={{
@@ -58,13 +61,11 @@ export default function LoginPage() {
         flexDirection: "column",
         gap: "16px",
       }}>
-        {/* Title */}
-      <h1 style={{ color: "#FFFF99", margin: "0 0 8px 0", fontSize: "2rem", fontWeight: 900, textAlign: "center", width: "100%" }}>
+        <h1 style={{ color: "#FFFF99", margin: "0 0 8px 0", fontSize: "2rem", fontWeight: 900, textAlign: "center", width: "100%" }}>
           The <span style={{ color: "#FFFF99" }}>Facility</span>
         </h1>
         <p style={{ color: "#b5bac1", margin: 0, fontSize: "0.9rem", textAlign: "center", width: "100%" }}>Lambchop Says Hai</p>
 
-        {/* Email */}
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <label style={{ color: "#b5bac1", fontSize: "0.85rem", fontWeight: "bold" }}>EMAIL</label>
           <input
@@ -85,7 +86,6 @@ export default function LoginPage() {
           />
         </div>
 
-        {/* Password */}
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <label style={{ color: "#b5bac1", fontSize: "0.85rem", fontWeight: "bold" }}>PASSWORD</label>
           <input
@@ -106,7 +106,6 @@ export default function LoginPage() {
           />
         </div>
 
-        {/* Login button */}
         <button
           onClick={handleSubmit}
           style={{
@@ -127,7 +126,6 @@ export default function LoginPage() {
           Login
         </button>
 
-        {/* Sign up button bottom right */}
         <button
           onClick={() => navigate("/signup")}
           style={{
