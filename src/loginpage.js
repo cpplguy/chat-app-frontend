@@ -73,7 +73,7 @@ export default function LoginPage() {
       <section className="page" id="login">
         <div className="logo">
           <h1>
-            Chat <span className="green">App</span>
+            The <span className="green">Facility</span>
           </h1>
         </div>
 
