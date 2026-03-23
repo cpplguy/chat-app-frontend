@@ -59,8 +59,8 @@ export default function LoginPage() {
         gap: "16px",
       }}>
         {/* Title */}
-        <h1 style={{ color: "white", margin: "0 0 8px 0", fontSize: "2rem", fontWeight: 900 }}>
-          The <span style={{ color: "#57F287" }}>Facility</span>
+      <h1 style={{ color: "#FFFF99", margin: "0 0 8px 0", fontSize: "2rem", fontWeight: 900, textAlign: "center", width: "100%" }}>
+          The <span style={{ color: "#FFFF99" }}>Facility</span>
         </h1>
         <p style={{ color: "#b5bac1", margin: 0, fontSize: "0.9rem" }}>Welcome back! Please login.</p>
 
