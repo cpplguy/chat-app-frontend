@@ -62,7 +62,7 @@ export default function LoginPage() {
       <h1 style={{ color: "#FFFF99", margin: "0 0 8px 0", fontSize: "2rem", fontWeight: 900, textAlign: "center", width: "100%" }}>
           The <span style={{ color: "#FFFF99" }}>Facility</span>
         </h1>
-        <p style={{ color: "#b5bac1", margin: 0, fontSize: "0.9rem" }}>Welcome back! Please login.</p>
+        <p style={{ color: "#b5bac1", margin: 0, fontSize: "0.9rem", textAlign: "center", width: "100%" }}>Lambchop Says Hai</p>
 
         {/* Email */}
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
